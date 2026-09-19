@@ -1,0 +1,319 @@
+/* ==========================================================================
+   WarmNest Chimney — Home 2 (editorial premium layout), extra styles only.
+   Loaded AFTER css/home.css — header, footer, tokens, and buttons come from
+   that shared file untouched. Sections here strictly alternate --surface
+   (white) / --surface-ember (light ember).
+
+   Breakpoints (non-overlapping, explicit min/max on every query, matching
+   home.css):
+     base   : 0–639px    (mobile)
+     tier-2 : 640–1023px (tablet)
+     tier-3 : 1024–1279px (laptop)
+     tier-4 : 1280px+    (desktop)
+   Where tier-3 and tier-4 share the same layout, one "(min-width: 1024px)"
+   query covers both, same convention as home.css.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. HERO — split layout: copy on one side, a framed photo on the other,
+   properly aligned at every breakpoint (centered + stacked through tablet,
+   side-by-side and vertically centered from 1024px up).
+   ========================================================================== */
+
+.hero2 {
+  background: linear-gradient(160deg, var(--surface-ember) 0%, var(--surface) 62%);
+  padding: 4rem 0 4.5rem;
+  overflow: hidden;
+}
+.hero2 .container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+.hero2-copy { text-align: center; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+/* staggered hero entrance — kicker, heading, lede, actions and trust line each fade/rise in turn */
+.hero2-copy .kicker,
+.hero2-copy h1,
+.hero2-copy p.lede,
+.hero2-actions,
+.hero2-trust {
+  opacity: 0;
+  animation: fadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero2-copy .kicker { animation-delay: 0.04s; }
+.hero2-copy h1 { animation-delay: 0.14s; }
+.hero2-copy p.lede { animation-delay: 0.26s; }
+.hero2-actions { animation-delay: 0.38s; }
+.hero2-trust { animation-delay: 0.5s; }
+@media (prefers-reduced-motion: reduce) {
+  .hero2-copy .kicker, .hero2-copy h1, .hero2-copy p.lede, .hero2-actions, .hero2-trust { animation: none; opacity: 1; }
+}
+.hero2-copy .kicker { color: var(--primary); font-weight: 600; display: block; margin-bottom: 0.75rem; }
+.hero2-copy h1 { font-size: clamp(2.1rem, 4.6vw, 3rem); max-width: 16ch; margin-inline: auto; }
+.hero2-copy p.lede { color: var(--text-soft); font-size: 1.1rem; max-width: 46ch; margin: 0 auto 1.75rem; }
+.hero2-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; justify-content: center; }
+.hero2-trust { display: flex; align-items: center; gap: 0.6rem; color: var(--text-soft); font-size: 0.92rem; justify-content: center; }
+.hero2-trust .stars { color: var(--primary); letter-spacing: 1px; }
+
+.hero2-art {
+  position: relative;
+  max-width: 26rem;
+  margin-inline: auto;
+  opacity: 0;
+  animation: fadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.2s;
+}
+@media (prefers-reduced-motion: reduce) { .hero2-art { animation: none; opacity: 1; } }
+.hero2-art .frame {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.hero2-art img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 3; object-position: center 22%; }
+@media (hover: hover) and (pointer: fine) {
+  .hero2-art:hover .frame { transform: translateY(-6px); box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12); }
+}
+.hero2-badge {
+  position: absolute;
+  inset-block-end: -1rem;
+  inset-inline-start: -1rem;
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 0.75rem 0.95rem;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  max-width: 11rem;
+}
+.hero2-badge svg { width: 1.3rem; height: 1.3rem; color: var(--primary); flex-shrink: 0; }
+.hero2-badge strong { display: block; font-family: var(--font-display); font-size: 0.92rem; }
+.hero2-badge span { color: var(--text-soft); font-size: 0.74rem; }
+@media (hover: hover) and (pointer: fine) {
+  .hero2-badge:hover { transform: translateY(-3px); box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12); }
+}
+
+/* base tier (0–639px): badge can't hang off the frame's corner on a narrow
+   phone, so it drops below the photo as a block instead, pulled up to
+   overlap the photo's bottom edge. Needs position:relative + a z-index
+   above the frame here — the frame's box-shadow/transition promotes it to
+   its own compositing layer, so a plain position:static badge gets painted
+   *under* the photo for the overlapping strip, clipping the "15+ Years"
+   line behind it. */
+@media (max-width: 639px) {
+  .hero2-badge { position: relative; z-index: 2; margin-top: -2rem; margin-inline: auto; }
+}
+
+/* tier-2 (640–1023px): stays stacked — copy above, photo below — same as
+   base. The grid only goes side-by-side from 1024px up, where there's
+   enough width for both columns to breathe. */
+
+/* tier-3 + tier-4 (1024px+): side-by-side hero, left-aligned copy. */
+@media (min-width: 1024px) {
+  .hero2 .container { grid-template-columns: 1.1fr 1fr; gap: 2rem; align-items: start; }
+  .hero2-copy { text-align: start; }
+  .hero2-copy h1 { margin-inline: 0; }
+  .hero2-copy p.lede { margin-inline: 0; }
+  .hero2-actions { justify-content: flex-start; }
+  .hero2-trust { justify-content: flex-start; }
+  .hero2-art { max-width: none; width: 100%; align-self: start; }
+}
+
+/* ==========================================================================
+   2. THE WARMNEST STANDARD — icon feature cards (not zig-zag rows)
+   ========================================================================== */
+.standard-grid { display: grid; grid-template-columns: 1fr; gap: 1.75rem; align-items: stretch; }
+.standard-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 2rem 1.75rem;
+  text-align: center;
+  border-block-start: 3px solid var(--primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.standard-card .standard-icon {
+  width: 3.5rem; height: 3.5rem;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: var(--surface-ember);
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.35s ease, background-color 0.3s ease, color 0.3s ease;
+}
+.standard-icon svg { width: 1.7rem; height: 1.7rem; }
+.standard-card .num { font-family: var(--font-display); font-size: 0.85rem; color: var(--primary); font-weight: 700; display: block; margin-bottom: 0.5rem; }
+.standard-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+.standard-card p { color: var(--text-soft); font-size: 0.95rem; margin: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .standard-card:hover { transform: translateY(-6px); box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12); border-color: var(--primary); }
+  .standard-card:hover .standard-icon { transform: scale(1.12) rotate(-6deg); background: var(--primary); color: #FFFFFF; }
+}
+.standard-card:active { transform: scale(0.98); }
+/* tier-2 (640–1023px): 2 columns — 3 columns this narrow squeezes each
+   card's paragraph down to a couple words per line, same issue fixed on
+   the Home 1 hazard/trust grids. Full row of 3 only from 1024px up. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .standard-grid { grid-template-columns: repeat(2, 1fr); }
+  /* 3 cards in a 2-col grid leaves the last one alone on its row, pinned
+     to the left column — span it across both and center it instead. */
+  .standard-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    max-width: calc(50% - 0.875rem);
+    margin-inline: auto;
+  }
+}
+@media (min-width: 1024px) {
+  .standard-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ==========================================================================
+   3. REAL RESULTS — animated counters, centered row
+   ========================================================================== */
+.counter-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  text-align: center;
+}
+.counter-item {
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+.counter-item .counter-icon {
+  width: 3rem; height: 3rem;
+  margin: 0 auto 0.85rem;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--secondary);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(43,36,32,0.06);
+  transition: transform 0.35s ease, background-color 0.3s ease, color 0.3s ease;
+}
+.counter-icon svg { width: 1.5rem; height: 1.5rem; }
+@media (hover: hover) and (pointer: fine) {
+  .counter-item:hover { transform: translateY(-4px); }
+  .counter-item:hover .counter-icon { transform: scale(1.12) rotate(-6deg); background: var(--primary); color: #FFFFFF; }
+}
+.counter-value {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  color: var(--text);
+  display: block;
+}
+.counter-label { color: var(--text-soft); font-size: 0.92rem; margin-top: 0.3rem; }
+/* stays 2 columns through tablet — "Average arrival window" and similar
+   labels need the room; full row of 4 only from 1024px up. */
+@media (min-width: 1024px) {
+  .counter-row { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ==========================================================================
+   4. WHAT HOMEOWNERS SAY — static quote wall (no carousel)
+   ========================================================================== */
+.quote-wall { display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: stretch; }
+.quote-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 1.75rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.quote-card .quote-mark { font-family: var(--font-display); font-size: 2.5rem; line-height: 1; color: var(--surface-ember); display: block; margin-bottom: 0.25rem; transition: color 0.3s ease; }
+.quote-card p.quote-text { font-family: var(--font-display); font-size: 1.05rem; color: var(--text); margin-bottom: 1rem; }
+.quote-card .cite { color: var(--text-soft); font-size: 0.88rem; margin-top: auto; }
+@media (hover: hover) and (pointer: fine) {
+  .quote-card:hover { transform: translateY(-3px); box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12); border-color: var(--primary); }
+  .quote-card:hover .quote-mark { color: var(--primary); }
+}
+.quote-card:active { transform: scale(0.99); }
+/* 2 columns from tablet up — each quote card stays wide enough (≥ ~280px
+   at 640px) to read comfortably, so this can start at tier-2 rather than
+   waiting for 1024px like the denser 3/4-column grids above. */
+@media (min-width: 640px) {
+  .quote-wall { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ==========================================================================
+   5. CARE PLANS — comparison table instead of pricing cards
+   ========================================================================== */
+.compare-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+}
+table.compare-table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.compare-table th, .compare-table td {
+  padding: 0.95rem 1.1rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.compare-table th:first-child, .compare-table td:first-child { text-align: start; color: var(--text-soft); font-weight: 500; }
+.compare-table thead th {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--surface-alt);
+}
+.compare-table thead th.featured { color: var(--secondary); }
+.compare-table tbody td.featured { background: rgba(217,99,26,0.06); }
+.compare-table tbody tr { transition: background-color 0.2s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .compare-table tbody tr:hover { background: var(--surface-alt); }
+  .compare-table tbody tr:hover td.featured { background: rgba(217,99,26,0.12); }
+}
+.compare-table .price-row td { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--secondary); }
+.compare-table svg.tick { width: 1.15rem; height: 1.15rem; color: var(--primary); }
+.compare-table .dash { color: var(--border); }
+.compare-cta { text-align: center; margin-top: 1.75rem; }
+
+/* ==========================================================================
+   6. FINAL CTA — full-bleed image banner, centered content
+   ========================================================================== */
+.cta-banner {
+  position: relative;
+  overflow: hidden;
+  padding: 5rem 0;
+  text-align: center;
+  background:
+    linear-gradient(160deg, rgba(43,36,32,0.85) 0%, rgba(168,67,30,0.8) 100%),
+    url("../images/home2-cta.jpg") center/cover no-repeat;
+}
+.cta-banner h2 { color: #FFFFFF; margin-bottom: 0.6rem; }
+.cta-banner p { color: rgba(255,255,255,0.88); max-width: 44ch; margin: 0 auto 1.75rem; }
+
+/* ==========================================================================
+   Shared scroll-reveal (fade-up) for grids that don't use the directional
+   zig-zag reveal above.
+   ========================================================================== */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }

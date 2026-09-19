@@ -1,0 +1,902 @@
+/* ==========================================================================
+   WarmNest Chimney — About page stylesheet
+   Same design tokens, header, and footer as Home 1 (css/home.css), trimmed
+   to only the components the About page actually uses.
+   Breakpoints (non-overlapping, explicit min/max on every query, matching
+   home.css / home-2.css):
+     base   : 0–639px    (mobile)
+     tier-2 : 640–1023px (tablet)
+     tier-3 : 1024–1279px (laptop)
+     tier-4 : 1280px+    (desktop)
+   Where tier-3 and tier-4 share the same layout, one "(min-width: 1024px)"
+   query covers both, same convention as home.css.
+   Supports: [data-theme="dark"] on <html>, dir="rtl" on <html>.
+   ========================================================================== */
+
+:root {
+  /* brand constants — unaffected by theme */
+  --charcoal:  #2B2420;
+  --ember:     #D9631A;
+  --rust:      #A8431E;
+  --cream:     #F5EDE1;
+  --slate:     #5B564F;
+  --safety:    #B33A2E;
+  --charcoal-soft: #3A322C;
+  --cream-dim: #EAE0CF;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", "Source Sans 3", -apple-system, sans-serif;
+  --font-accent: "Kalam", cursive;
+
+  --content-max: 76rem;
+  --gutter: 1.25rem;
+
+  /* primary / secondary brand accents */
+  --primary: #D9631A;   /* ember */
+  --secondary: #A8431E; /* rust */
+
+  /* light theme (default) */
+  --page-bg: var(--cream);
+  --text: var(--charcoal);
+  --text-soft: var(--slate);
+  --surface: #FFFFFF;
+  --surface-alt: var(--cream-dim);
+  --surface-ember: #FBE8D9;
+  --surface-rust: #F3DCD0;
+  --border: rgba(43,36,32,0.12);
+}
+
+:root[data-theme="dark"] {
+  --primary: #E2701F;   /* brighter ember for contrast on dark surfaces */
+  --secondary: #C2551F; /* brighter rust for contrast on dark surfaces */
+
+  --page-bg: #1B1714;
+  --text: var(--cream);
+  --text-soft:#FFFFFF;
+  --surface: #241F1B;
+  --surface-alt: #2E2721;
+  --surface-ember: #2E2118;
+  --surface-rust: #2E1B12;
+  --border: rgba(245,237,225,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { max-width: 100%; overflow-x: clip; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--page-bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.5em;
+  color: var(--text);
+}
+.container {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---------- header — white / black in light mode, flips with dark mode ---------- */
+.site-header {
+  background: var(--surface);
+  color: var(--text);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-block-end: 1px solid var(--border);
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  min-height: 4.9rem;
+  padding-block: 0.7rem;
+}
+
+.brand { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; flex-shrink: 0; }
+.brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
+.brand-copy { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
+.brand-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+/* header only: force pure white in dark mode (var(--text) is off-white cream there) */
+:root[data-theme="dark"] .site-header .brand-text { color: #FFFFFF; }
+/* footer background never changes with theme, so its logo text must stay static white */
+.site-footer .brand-text { color: #FFFFFF; }
+.brand-text span { color: var(--primary); }
+.brand-tag {
+  font-family: var(--font-accent);
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  margin-block-start: 0.15rem;
+}
+.site-footer .brand-tag { color: #FFFFFF; }
+
+/* logo mark inverts with header: structure follows text color, cutouts follow bg */
+.logo-fill { fill: var(--text); }
+.logo-stroke { stroke: var(--text); }
+.logo-cutout { fill: var(--surface); }
+:root[data-theme="dark"] .site-header .logo-fill { fill: #FFFFFF; }
+:root[data-theme="dark"] .site-header .logo-stroke { stroke: #FFFFFF; }
+
+/* ---------- hamburger menu toggle ---------- */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--secondary);
+  border-radius: 3px;
+  padding: 0.5rem 0.65rem;
+  cursor: pointer;
+  order: 2;
+  line-height: 0;
+}
+.nav-toggle:hover { border-color: var(--primary); }
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 1.25rem;
+  height: 0.85rem;
+}
+.hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--text);
+  border-radius: 1px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform-origin: center;
+}
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* center block: takes remaining space, centers the nav list within it */
+.nav-wrap {
+  display: flex;
+  justify-content: center;
+  order: 1;
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-wrap nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 1.35rem;
+  margin: 0;
+  padding: 0;
+}
+.nav-list a {
+  text-decoration: none;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.35rem 0;
+  border-block-end: 2px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+.nav-list a:hover {
+  color: var(--text);
+  border-color: var(--primary);
+}
+.nav-list a[aria-current="page"] {
+  color: var(--primary);
+  font-weight: 600;
+  border-color: var(--primary);
+}
+
+/* dropdown (Home 1 / Home 2) */
+.nav-dropdown { position: relative; }
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  padding: 0.35rem 0;
+  border-block-end: 2px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.dropdown-toggle:hover,
+.dropdown-toggle[aria-expanded="true"] { color: var(--text); border-color: var(--primary); }
+.dropdown-toggle[aria-current="page"] { color: var(--primary); font-weight: 700; border-color: var(--primary); }
+.dropdown-toggle .caret { font-size: 0.7rem; transition: transform 0.15s ease; }
+.dropdown-toggle[aria-expanded="true"] .caret { transform: rotate(180deg); }
+
+.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem;
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 0.6rem);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  min-width: 10rem;
+  display: none;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.dropdown-menu.open { display: block; }
+.dropdown-menu a {
+  display: block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 3px;
+  border-block-end: none;
+  white-space: nowrap;
+}
+.dropdown-menu a:hover {
+  background: rgba(217,99,26,0.15);
+  color: var(--text);
+}
+.dropdown-menu a[aria-current="page"] {
+  background: rgba(217,99,26,0.15);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* header actions: theme toggle, rtl toggle, book now (desktop) */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  order: 3;
+  flex-shrink: 0;
+}
+.icon-toggle {
+  background: none;
+  border: 1px solid var(--secondary);
+  color: var(--text);
+  border-radius: 999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+}
+.icon-toggle:hover { border-color: var(--primary); color: var(--primary); }
+.icon-toggle .icon-dark { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-light { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-dark { display: inline; }
+
+.rtl-toggle { width: auto; padding: 0 0.65rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+.book-btn {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border-radius: 3px;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.book-btn:hover { background: var(--secondary);
+box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
+
+
+/* mobile-only Book Now (lives inside the collapsible menu) — hidden by default */
+.book-btn-mobile { display: none; }
+
+/* base tier (0–639px): hamburger menu, dropdown detached from the flex row
+   via position:absolute so the header row itself can stay flex-wrap:nowrap
+   and never wraps to a second line — same structural fix used on home.css. */
+@media (max-width: 639px) {
+  .nav-toggle { display: inline-block; }
+
+  .site-header .container { position: relative; align-items: center; gap: 0.5rem; padding-inline: 1rem; flex-wrap: nowrap; }
+
+  .nav-wrap {
+    display: none;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    justify-content: flex-start;
+    background: var(--surface-alt);
+    border-block-start: 1px solid var(--border);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    padding-block: 0.5rem 1rem;
+  }
+  .nav-wrap.open { display: flex; flex-direction: column; }
+  .nav-wrap nav { flex: initial; flex-direction: column; align-items: stretch; width: 100%; }
+
+  .nav-list { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
+  .nav-list li { width: 100%; }
+  .nav-list a { display: block; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .nav-dropdown { width: 100%; }
+  .dropdown-toggle { width: 100%; justify-content: space-between; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .dropdown-menu { position: static; box-shadow: none; border: none; background: transparent; border-radius: 0; min-width: 0; }
+  .dropdown-menu a { padding-inline-start: calc(var(--gutter) * 1.6); }
+
+  /* theme + RTL toggles stay visible in the header at every width;
+     the hamburger sits after them; the desktop Book Now hides and a
+     mobile copy appears inside the menu */
+  .header-actions { order: 2; margin-inline-start: auto; gap: 0.5rem; align-items: center; }
+  .nav-toggle { order: 3; margin-inline-start: 0.5rem; align-self: center; }
+  .book-btn-desktop { display: none; }
+  .book-btn-mobile {
+    display: block;
+    width: calc(100% - (2 * var(--gutter)));
+    text-align: center;
+    margin: 1rem var(--gutter) 0;
+  }
+
+  /* keep the logo mark, wordmark and header icons on one aligned baseline;
+     flex:1 1 0% (not auto) so the brand's hypothetical size used for the
+     flex-wrap decision starts at 0 and ellipsis truncation can actually
+     take effect before the row would ever wrap.
+     Scoped to .site-header — an unscoped .brand-copy/.brand-text/.brand-tag
+     rule here also matches the footer's reused brand-copy markup and
+     stretches it to fill the row, which (with the footer's centered text)
+     visually shoves the wordmark far away from the logo mark on mobile. */
+  .site-header .brand { gap: 0.45rem; align-items: center; flex: 1 1 0%; min-width: 0; }
+  .site-header .brand svg { width: 2rem; height: 2rem; flex-shrink: 0; }
+  .site-header .brand-copy { justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .site-header .brand-text, .site-header .brand-tag { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .site-header .brand-text { font-size: 0.95rem; line-height: 1.15; }
+  .site-header .brand-tag { font-size: 0.68rem; margin-block-start: 0.1rem; }
+  .header-actions { flex-shrink: 0; gap: 0.35rem; }
+  .nav-toggle { flex-shrink: 0; }
+  .icon-toggle { width: 1.85rem; height: 1.85rem; }
+  .rtl-toggle { font-size: 0.68rem; padding: 0 0.45rem; }
+}
+
+/* tier-2 (640–1023px): same hamburger/dropdown pattern as base — there's
+   still not enough width for the full inline nav-list. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .nav-toggle { display: inline-block; }
+
+  .site-header .container { position: relative; align-items: center; gap: 0.6rem; flex-wrap: nowrap; }
+
+  .nav-wrap {
+    display: none;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    justify-content: flex-start;
+    background: var(--surface-alt);
+    border-block-start: 1px solid var(--border);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    padding-block: 0.5rem 1rem;
+  }
+  .nav-wrap.open { display: flex; flex-direction: column; }
+  .nav-wrap nav { flex: initial; flex-direction: column; align-items: stretch; width: 100%; }
+
+  .nav-list { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
+  .nav-list li { width: 100%; }
+  .nav-list a { display: block; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .nav-dropdown { width: 100%; }
+  .dropdown-toggle { width: 100%; justify-content: space-between; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .dropdown-menu { position: static; box-shadow: none; border: none; background: transparent; border-radius: 0; min-width: 0; }
+  .dropdown-menu a { padding-inline-start: calc(var(--gutter) * 1.6); }
+
+  .header-actions { order: 2; margin-inline-start: auto; gap: 0.5rem; align-items: center; }
+  .nav-toggle { order: 3; margin-inline-start: 0.5rem; align-self: center; }
+  .book-btn-desktop { display: none; }
+  .book-btn-mobile {
+    display: block;
+    width: calc(100% - (2 * var(--gutter)));
+    text-align: center;
+    margin: 1rem var(--gutter) 0;
+  }
+
+  .site-header .brand { gap: 0.5rem; align-items: center; flex: 1 1 0%; min-width: 0; }
+  .site-header .brand-copy { justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .site-header .brand-text, .site-header .brand-tag { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .header-actions { flex-shrink: 0; }
+  .nav-toggle { flex-shrink: 0; }
+}
+
+/* tier-3 + tier-4 (1024px+): full inline nav, no hamburger. */
+@media (min-width: 1024px) {
+  .nav-toggle { display: none; }
+  .nav-wrap { display: flex; }
+  .book-btn-mobile { display: none; }
+}
+
+/* tier-3 only (1024–1279px): nav list runs a little tight at this width,
+   trim gaps/sizes slightly — same pattern as home.css. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .nav-list { gap: 0.3rem 0.65rem; }
+  .nav-list a, .dropdown-toggle { font-size: 0.88rem; }
+  .site-header .brand { gap: 0.5rem; }
+  .site-header .brand svg { width: 2.4rem; height: 2.4rem; }
+  .site-header .brand-text { font-size: 1.1rem; }
+  .site-header .brand-tag { font-size: 0.72rem; }
+}
+
+/* ---------- footer ---------- */
+.site-footer {
+  background: var(--charcoal);
+  color: var(--cream-dim);
+  padding: 3rem 0 2rem;
+  font-size: 0.92rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding-block-end: 2rem;
+  border-block-end: 1px solid rgba(245,237,225,0.12);
+}
+.footer-col h4 {
+  color: var(--cream);
+  font-size: 1rem;
+  margin-bottom: 0.85rem;
+}
+.footer-col p, .footer-col address { margin: 0 0 0.5em; font-style: normal; color: #FFFFFF; }
+.footer-contact-item { display: flex; align-items: center; gap: 0.55rem; margin-bottom: 0.6rem; }
+.footer-contact-item svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--secondary); }
+.footer-contact-item a { color: #FFFFFF; text-decoration: none; }
+.footer-contact-item a:hover { color: var(--primary); }
+.footer-links { list-style: none; margin: 0; padding: 0; }
+.footer-links li { margin-bottom: 0.55rem; }
+.footer-links a { color: #FFFFFF; text-decoration: none; }
+.footer-links a:hover { color: var(--primary); }
+.footer-brand { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; }
+.footer-brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
+.footer-brand .brand-copy { min-width: 0; }
+.footer-brand .brand-text,
+.footer-brand .brand-tag {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  padding-block-start: 1.5rem;
+}
+
+.footer-bottom a { color: var(--secondary); text-decoration: none; }
+.footer-bottom a:hover { color: var(--primary); }
+
+/* mobile: center everything in the footer */
+@media (max-width: 639px) {
+  .footer-grid { text-align: center; }
+  .footer-col address { text-align: center; }
+  .footer-brand { justify-content: center; }
+  .footer-contact-item { justify-content: center; }
+  .footer-bottom { justify-content: center; text-align: center; }
+  .footer-brand { gap: 0.4rem; }
+  .footer-brand svg { width: 2.5rem; height: 2.5rem; }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; }
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ==========================================================================
+   Scroll-reveal animation — same orchestrated pattern used on Home 1.
+   Skips entirely for prefers-reduced-motion.
+   ========================================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- shared buttons ---------- */
+.btn-primary {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  border-radius: 3px;
+  text-decoration: none;
+  display: inline-block;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+.btn-primary:hover { background: var(--secondary); color: #FFFFFF; transform: translateY(-2px); box-shadow: 0 10px 22px rgba(217,99,26,0.32); }
+.btn-primary:active { transform: translateY(0); box-shadow: none; }
+.btn-ghost {
+  color: var(--cream);
+  padding: 0.8rem 1.5rem;
+  border: 1px solid var(--secondary);
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 1rem;
+  display: inline-block;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+.btn-ghost:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.18); }
+.btn-ghost-light { color: var(--text); border-color: var(--border); }
+.btn-ghost-light:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* ==========================================================================
+   About page content sections
+   ========================================================================== */
+
+section.page-section { padding: 4rem 0; }
+.section-white { background: var(--surface); }
+.section-cream { background: var(--page-bg); }
+.section-ember { background: var(--surface-ember); }
+.section-rust { background: var(--surface-rust); }
+
+.section-head { max-width: 42rem; margin-inline: auto; margin-bottom: 2.25rem; text-align: center; }
+.section-head .kicker { color: var(--primary); font-weight: 600; margin-bottom: 0.35rem; display: block; }
+.section-head h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+.section-head p { color: var(--text-soft); margin: 0 auto; max-width: 62ch; }
+
+/* simple page intro band — used on interior pages like About */
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+  background:
+    linear-gradient(160deg, rgba(43,36,32,0.88) 0%, rgba(43,36,32,0.68) 45%, rgba(32,26,34,0.9) 100%),
+    url("../images/about-hero.jpg") center/cover no-repeat;
+  color: var(--cream);
+  padding: 6rem 0;
+  text-align: center;
+}
+.page-hero .container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+/* staggered hero entrance — eyebrow then heading fade/rise in turn, same as Home 1 */
+.page-hero .hero-eyebrow,
+.page-hero h1,
+.page-hero p.lede {
+  opacity: 0;
+  animation: fadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.page-hero .hero-eyebrow { animation-delay: 0.05s; }
+.page-hero h1 { animation-delay: 0.18s; }
+.page-hero p.lede { animation-delay: 0.32s; }
+@media (prefers-reduced-motion: reduce) {
+  .page-hero .hero-eyebrow, .page-hero h1, .page-hero p.lede { animation: none; opacity: 1; }
+}
+.page-hero .hero-eyebrow { color: var(--cream-dim); font-size: 0.95rem; margin-bottom: 0.75rem; }
+.page-hero h1 { color: #FFFFFF; font-size: clamp(2.1rem, 5vw, 3.2rem); max-width: 32ch; margin-inline: auto; }
+.page-hero p.lede { color: var(--cream-dim); font-size: 1.1rem; max-width: 46ch; margin: 1rem auto 0; }
+@media (max-width: 639px) {
+  .page-hero { min-height: 45vh; padding: 4.5rem 0; }
+}
+
+/* our story — image beside a reading column, equal columns, stacks through
+   tablet and switches to side-by-side at 1024px (same boundary used for
+   the Home 2 hero split, for the same reason: two columns need real width
+   to breathe, not just tablet width). */
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 2.5rem;
+}
+.story-image {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.story-image:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+}
+.story-image img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+.story-image:hover img { transform: scale(1.06); }
+.story-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.story-content p { color: var(--text-soft); font-size: 1.02rem; line-height: 1.7; margin: 0 0 1.1rem; }
+.story-content p:last-child { margin-bottom: 0; }
+@media (min-width: 1024px) {
+  .story-grid { grid-template-columns: 1fr 1fr; }
+  .story-image img { aspect-ratio: auto; }
+}
+
+/* our journey — animated vertical timeline, alternates sides from 1024px up
+   (same boundary as story-grid above — the alternating layout needs the
+   same real desktop width to read cleanly). */
+.timeline {
+  position: relative;
+  max-width: 54rem;
+  margin-inline: auto;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  left: 1rem;
+  width: 2px;
+  background: var(--border);
+}
+.timeline-item {
+  position: relative;
+  padding-inline-start: 2.75rem;
+  padding-block-end: 2.25rem;
+}
+.timeline-item:last-child { padding-block-end: 0; }
+.timeline-dot {
+  position: absolute;
+  left: 1rem;
+  top: 0.3rem;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 3px solid var(--surface-ember);
+  box-shadow: 0 0 0 3px rgba(217,99,26,0.28);
+  z-index: 2;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.timeline-item:hover .timeline-dot {
+  transform: translateX(-50%) scale(1.35);
+  box-shadow: 0 0 0 6px rgba(217,99,26,0.32);
+}
+.timeline-card {
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.timeline-item:hover .timeline-card {
+  transform: translateY(-5px);
+  box-shadow:0 16px 30px rgba(233, 69, 69, 0.12);
+  border-color: var(--primary);
+}
+.timeline-year {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+.timeline-card h3 { margin: 0 0 0.35rem; font-size: 1.05rem; }
+.timeline-card p { margin: 0; color: var(--text-soft); font-size: 0.92rem; line-height: 1.5; }
+
+/* staggered reveal — each milestone animates in slightly after the last */
+.timeline-item.reveal:nth-child(1) { transition-delay: 0s; }
+.timeline-item.reveal:nth-child(2) { transition-delay: 0.1s; }
+.timeline-item.reveal:nth-child(3) { transition-delay: 0.2s; }
+.timeline-item.reveal:nth-child(4) { transition-delay: 0.3s; }
+.timeline-item.reveal:nth-child(5) { transition-delay: 0.4s; }
+
+@media (min-width: 1024px) {
+  .timeline::before { left: 50%; transform: translateX(-50%); }
+  .timeline-item {
+    width: 50%;
+    padding-inline-start: 0;
+    padding-inline-end: 3rem;
+  }
+  .timeline-item:nth-child(even) {
+    margin-inline-start: 50%;
+    padding-inline-start: 3rem;
+    padding-inline-end: 0;
+  }
+  .timeline-item:nth-child(odd) .timeline-card { text-align: end; }
+  /* logical inset properties so the dot stays pinned to the center line
+     (its card's inline-end edge) in both LTR and RTL — the cards already
+     swap sides correctly via the logical margin/padding above; only these
+     dot offsets were physical left/right and didn't flip with dir="rtl". */
+  .timeline-dot { inset-inline-start: auto; inset-inline-end: -8px; transform: none; }
+  .timeline-item:nth-child(even) .timeline-dot { inset-inline-start: -8px; inset-inline-end: auto; }
+  .timeline-item:hover .timeline-dot { transform: scale(1.35); }
+}
+
+/* what we stand for — card grid with Lucide-style icons (shared with Home 1) */
+.trust-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.trust-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.trust-card:hover { transform: translateY(-6px); box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12); border-color: var(--primary); }
+.trust-icon {
+  width: 3rem; height: 3rem;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--surface-alt);
+  color: var(--secondary);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.35s ease, background-color 0.3s ease, color 0.3s ease;
+}
+.trust-card:hover .trust-icon {
+  transform: scale(1.12) rotate(-6deg);
+  background: var(--primary);
+  color: #FFFFFF;
+}
+.trust-icon svg { width: 1.5rem; height: 1.5rem; }
+/* headings wrap to 1 line on some cards and 2 on others at narrower
+   tablet/laptop widths ("Real craftsmanship" vs "Honesty first"), which
+   pushes each card's paragraph to a different start height and breaks the
+   row alignment. Reserve 2 lines' worth of height and center within it, so
+   every card's paragraph lines up regardless of how its own heading wraps. */
+.trust-card h3 { font-size: 1.05rem; line-height: 1.2; margin-bottom: 0.35rem; min-height: 2.4em; display: flex; align-items: center; justify-content: center; }
+.trust-card p { margin: 0; color: var(--text-soft); font-size: 0.95rem; }
+/* 2 columns for the full tablet tier — 4-across at 640px only left ~130px
+   per card, cramped enough that headings/text wrapped inconsistently between
+   cards even with the reserved-height fix above. Full row of 4 only from
+   1024px up, matching the hazard/standard grid convention on the Home
+   pages. align-items: stretch (grid default) plus flex-direction: column
+   on the card itself keeps icon/heading/text aligned within each row. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .trust-grid { grid-template-columns: repeat(2, 1fr); align-items: stretch; }
+}
+@media (min-width: 1024px) {
+  .trust-grid { grid-template-columns: repeat(4, 1fr); align-items: stretch; }
+}
+
+/* meet the team */
+.team-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.team-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+.team-card:hover { transform: translateY(-6px); box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12); border-color: var(--primary); }
+.team-avatar {
+  display: block;
+  width: 5.5rem;
+  height: 5.5rem;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--surface-alt);
+  box-shadow: 0 0 0 1px var(--border);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  flex-shrink: 0;
+}
+.team-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.team-card:hover .team-avatar { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+.team-card:hover .team-avatar img { transform: scale(1.08); }
+/* names also wrap to a different number of lines per card at narrower
+   widths ("Arjun Varma" vs "Ravi Kumar") — same reserved-height treatment. */
+.team-card h3 { font-size: 1.05rem; line-height: 1.2; margin-bottom: 0.2rem; min-height: 2.4em; display: flex; align-items: center; justify-content: center; }
+/* same reserved-height fix as .trust-card h3 above: the role line ("Founder
+   & Lead Technician" vs "Senior Inspector") wraps to a different number of
+   lines per card at narrower widths, so reserve 2 lines and center within
+   them to keep every card's bio paragraph starting at the same height. */
+.team-role {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.3em;
+  line-height: 1.15;
+  color: var(--secondary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+.team-card p { margin: 0; color: var(--text-soft); font-size: 0.92rem; }
+/* Same 2-col tablet / 4-col desktop split as .trust-grid above, same reason:
+   4-across at 640px was too narrow. Avatar is fixed-size and flex-shrink: 0,
+   so name/role/bio always start at the same vertical position across every
+   card in a row regardless of how much bio text each person has. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .team-grid { grid-template-columns: repeat(2, 1fr); align-items: stretch; }
+}
+@media (min-width: 1024px) {
+  .team-grid { grid-template-columns: repeat(4, 1fr); align-items: stretch; }
+}
+
+/* final CTA — image background, properly centered */
+.cta-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(160deg, rgba(43,36,32,0.86) 0%, rgba(43,36,32,0.72) 50%, rgba(43,36,32,0.86) 100%),
+    url("../images/cta-chimney.jpg") center/cover no-repeat;
+  padding: 4.5rem 0;
+}
+.cta-block {
+  position: relative;
+  z-index: 1;
+  max-width: 40rem;
+  margin-inline: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.cta-block h2 { color: #FFFFFF; margin-bottom: 0.5rem; }
+.cta-block p { color: var(--cream-dim); max-width: 46ch; margin: 0 0 1.75rem; }

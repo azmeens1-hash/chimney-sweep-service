@@ -1,0 +1,313 @@
+/* ==========================================================================
+   WarmNest Chimney — standalone Booking form
+   No header/footer by design. Same design tokens as the rest of the site.
+   The whole page fits the viewport (no page-level scroll) — the card
+   itself scrolls internally only as a fallback on very short screens.
+   Supports: [data-theme="dark"] on <html>, dir="rtl" on <html>.
+   ========================================================================== */
+
+:root {
+  --charcoal:  #2B2420;
+  --ember:     #D9631A;
+  --rust:      #A8431E;
+  --cream:     #F5EDE1;
+  --slate:     #5B564F;
+  --safety:    #B33A2E;
+  --charcoal-soft: #3A322C;
+  --cream-dim: #EAE0CF;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", "Source Sans 3", -apple-system, sans-serif;
+  --font-accent: "Kalam", cursive;
+
+  --primary: #D9631A;
+  --secondary: #A8431E;
+
+  --page-bg: var(--cream);
+  --text: var(--charcoal);
+  --text-soft: var(--slate);
+  --surface: #FFFFFF;
+  --surface-alt: var(--cream-dim);
+  --surface-ember: #FBE8D9;
+  --surface-rust: #F3DCD0;
+  --border: rgba(43,36,32,0.12);
+}
+
+:root[data-theme="dark"] {
+  --primary: #E2701F;
+  --secondary: #C2551F;
+
+  --page-bg: #1B1714;
+  --text: var(--cream);
+  --text-soft:#FFFFFF;
+  --surface: #241F1B;
+  --surface-alt: #2E2721;
+  --surface-ember: #2E2118;
+  --surface-rust: #2E1B12;
+  --border: rgba(245,237,225,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* lock the page to the viewport — no page-level scroll */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--page-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.4em;
+  color: var(--text);
+}
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+.logo-fill { fill: var(--text); }
+.logo-stroke { stroke: var(--text); }
+:root[data-theme="dark"] .booking-brand .logo-fill { fill: #FFFFFF; }
+:root[data-theme="dark"] .booking-brand .logo-stroke { stroke: #FFFFFF; }
+.logo-cutout { fill: var(--surface); }
+
+/* ---------- page shell — full viewport, centered, background photo + blobs ---------- */
+.booking-page {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 1.25rem;
+  background:
+    linear-gradient(160deg, rgba(251,232,217,0.78) 0%, rgba(245,237,225,0.68) 55%, rgba(243,220,208,0.74) 100%),
+    url("../images/cta-chimney.jpg") center/cover no-repeat;
+  background-attachment: fixed;
+}
+:root[data-theme="dark"] .booking-page {
+  background:
+    linear-gradient(160deg, rgba(46,33,24,0.82) 0%, rgba(27,23,20,0.78) 55%, rgba(46,27,18,0.8) 100%),
+    url("../images/cta-chimney.jpg") center/cover no-repeat;
+  background-attachment: fixed;
+}
+.booking-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.3;
+  pointer-events: none;
+}
+.booking-blob-1 { width: 22rem; height: 22rem; background: var(--primary); top: -8rem; inset-inline-end: -6rem; }
+.booking-blob-2 { width: 18rem; height: 18rem; background: var(--secondary); bottom: -7rem; inset-inline-start: -5rem; opacity: 0.2; }
+
+/* ---------- top-right corner controls (theme + RTL) ---------- */
+.booking-corner-actions {
+  position: fixed;
+  top: 1rem;
+  inset-inline-end: 1rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.icon-toggle {
+  background: var(--surface);
+  border: 1px solid var(--secondary);
+  color: var(--text);
+  border-radius: 999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.icon-toggle:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+.icon-toggle .icon-dark { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-light { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-dark { display: inline; }
+.rtl-toggle { width: auto; padding: 0 0.65rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
+
+/* ---------- booking card ---------- */
+.booking-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 30rem;
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 30px 60px -20px rgba(43,36,32,0.35);
+  padding: 2rem 2rem 2.25rem;
+  text-align: center;
+  animation: bookingCardIn 0.5s ease both;
+}
+.booking-card::-webkit-scrollbar { display: none; }
+@keyframes bookingCardIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .booking-card { animation: none; }
+}
+
+.booking-brand {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+  text-align: start;
+}
+.booking-brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
+.booking-brand-copy { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; line-height: 1.2; min-width: 0; }
+.booking-brand-text { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; color: var(--text); letter-spacing: 0.01em; }
+:root[data-theme="dark"] .booking-brand-text { color: #FFFFFF; }
+
+/* Under 640px the card is nearly full-viewport width; shrink the mark
+   slightly so the wordmark stays on one line while staying centered. */
+@media (max-width: 639px) {
+  .booking-brand { gap: 0.5rem; }
+  .booking-brand svg { width: 2.25rem; height: 2.25rem; }
+  .booking-brand-text { font-size: 1.05rem; white-space: nowrap; }
+  .booking-brand-tag { font-size: 0.7rem; }
+}
+.booking-brand-text span { color: var(--primary); }
+.booking-brand-tag { font-family: var(--font-accent); font-size: 0.78rem; color: var(--text-soft); margin-block-start: 0.1rem; }
+
+.booking-card-body { text-align: center; }
+.kicker { color: var(--primary); font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem; }
+.booking-card-body h1 { font-size: clamp(1.5rem, 3vw, 1.85rem); }
+.booking-sub { color: var(--text-soft); font-size: 0.92rem; margin: 0 0 1.5rem; }
+
+/* ---------- form ---------- */
+.booking-form { display: flex; flex-direction: column; gap: 1.1rem; text-align: start; }
+.form-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; }
+.form-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.form-field label { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+.form-field input,
+.form-field select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--page-bg);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.form-field input:focus,
+.form-field select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(217,99,26,0.16);
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+.btn-primary:hover {
+  background: var(--secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(217,99,26,0.3);
+}
+.btn-secondary {
+  color: var(--text);
+  padding: 0.8rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  display: inline-block;
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+.btn-secondary:hover { color: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
+
+.booking-submit { margin-top: 0.35rem; }
+
+@media (min-width: 480px) {
+  .form-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---------- success state ---------- */
+.booking-success {
+  text-align: center;
+  padding: 0.5rem 0 0.25rem;
+  animation: bookingSuccessIn 0.4s ease both;
+}
+@keyframes bookingSuccessIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .booking-success { animation: none; }
+}
+.booking-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #FFFFFF;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.booking-success h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+.booking-success p { margin: 0 0 1.5rem; color: var(--text-soft); max-width: 30ch; margin-inline: auto; }
+
+/* ---------- very short viewports — let the card scroll rather than clip ---------- */
+@media (max-height: 640px) {
+  .booking-card { padding: 1.5rem 1.5rem 1.75rem; }
+  .booking-brand { margin-bottom: 0.9rem; }
+  .booking-sub { margin-bottom: 1.1rem; }
+}
+
+/* background-attachment: fixed is unreliable on iOS Safari — fall back to scroll there */
+@supports (-webkit-touch-callout: none) {
+  .booking-page,
+  :root[data-theme="dark"] .booking-page { background-attachment: scroll; }
+}

@@ -1,0 +1,1006 @@
+/* ==========================================================================
+   WarmNest Chimney — design tokens + header/footer
+   Breakpoints (non-overlapping, explicit min/max on every query):
+     base   : 0–639px    (mobile)
+     tier-2 : 640–1023px (tablet)
+     tier-3 : 1024–1279px (laptop)
+     tier-4 : 1280px+    (desktop)
+   Supports: [data-theme="dark"] on <html>, dir="rtl" on <html>.
+   ========================================================================== */
+
+:root {
+  /* brand constants — unaffected by theme */
+  --charcoal:  #2B2420;
+  --ember:     #D9631A;
+  --rust:      #A8431E;
+  --cream:     #F5EDE1;
+  --slate:     #5B564F;
+  --safety:    #B33A2E;
+  --charcoal-soft: #3A322C;
+  --cream-dim: #EAE0CF;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", "Source Sans 3", -apple-system, sans-serif;
+  --font-accent: "Kalam", cursive;
+
+  --content-max: 76rem;
+  --gutter: 1.25rem;
+
+  /* primary / secondary brand accents */
+  --primary: #D9631A;   /* ember */
+  --secondary: #A8431E; /* rust */
+
+  /* light theme (default) */
+  --page-bg: var(--cream);
+  --text: var(--charcoal);
+  --text-soft: var(--slate);
+  --surface: #FFFFFF;
+  --surface-alt: var(--cream-dim);
+  --surface-ember: #FBE8D9;
+  --surface-rust: #F3DCD0;
+  --border: rgba(43,36,32,0.12);
+}
+
+:root[data-theme="dark"] {
+  --primary: #E2701F;   /* brighter ember for contrast on dark surfaces */
+  --secondary: #C2551F; /* brighter rust for contrast on dark surfaces */
+
+  --page-bg: #1B1714;
+  --text: var(--cream);
+  --text-soft:#FFFFFF;
+  --surface: #241F1B;
+  --surface-alt: #2E2721;
+  --surface-ember: #2E2118;
+  --surface-rust: #2E1B12;
+  --border: rgba(245,237,225,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+/* belt-and-suspenders against any stray element (a background photo, the
+   hero video, a carousel track) forcing the whole page to scroll/swipe
+   sideways on mobile — every section already clips its own overflow, but
+   this guarantees the page itself never does even if one doesn't.
+   overflow-x: clip (not hidden) — hidden pairs overflow-y to "auto" per
+   the CSS overflow spec, which breaks the header's position: sticky. */
+html, body { max-width: 100%; overflow-x: clip; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--page-bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.5em;
+  color: var(--text);
+}
+.container {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+/* cross-browser normalization — Chrome and Edge (both Chromium) still differ
+   in native form-control chrome (select arrows, date pickers) and button
+   font inheritance depending on OS theme integration, so reset explicitly. */
+button, input, select, textarea { font-family: inherit; font-size: 100%; margin: 0; }
+button { -webkit-appearance: none; appearance: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---------- header — white / black in light mode, flips with dark mode ---------- */
+.site-header {
+  background: var(--surface);
+  color: var(--text);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-block-end: 1px solid var(--border);
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  min-height: 4.9rem;
+  flex-wrap: wrap;
+  padding-block: 0.7rem;
+}
+
+.brand { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; flex-shrink: 0; order: 0; }
+.brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
+.brand-copy { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
+.brand-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+/* header only: force pure white in dark mode (var(--text) is off-white cream there) */
+:root[data-theme="dark"] .site-header .brand-text { color: #FFFFFF; }
+/* footer background never changes with theme, so its logo text must stay static white */
+.site-footer .brand-text { color: #FFFFFF; }
+.brand-text span { color: var(--primary); }
+.brand-tag {
+  font-family: var(--font-accent);
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  margin-block-start: 0.15rem;
+}
+.site-footer .brand-tag { color: #FFFFFF; }
+
+/* logo mark inverts with header: structure follows text color, cutouts follow bg */
+.logo-fill { fill: var(--text); }
+.logo-stroke { stroke: var(--text); }
+.logo-cutout { fill: var(--surface); }
+:root[data-theme="dark"] .site-header .logo-fill { fill: #FFFFFF; }
+:root[data-theme="dark"] .site-header .logo-stroke { stroke: #FFFFFF; }
+
+/* ---------- hamburger menu toggle ---------- */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--secondary);
+  border-radius: 3px;
+  padding: 0.5rem 0.65rem;
+  cursor: pointer;
+  order: 2;
+  line-height: 0;
+}
+.nav-toggle:hover { border-color: var(--primary); }
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 1.25rem;
+  height: 0.85rem;
+}
+.hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--text);
+  border-radius: 1px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform-origin: center;
+}
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* center block: takes remaining space, centers the nav list within it */
+.nav-wrap {
+  display: flex;
+  justify-content: center;
+  order: 1;
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-wrap nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+
+/* defensive: the collapsible menu must only ever show nav links and the
+   mobile Book Now button — never the brand/logo, even if a page's markup
+   nests it here by mistake. .book-btn-mobile is left alone so its own
+   per-breakpoint display rules (below) stay in control of when it shows,
+   instead of being forced on at every width. */
+.nav-wrap .brand,
+.nav-wrap .booking-brand,
+.nav-wrap > svg { display: none; }
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 1.35rem;
+  margin: 0;
+  padding: 0;
+}
+.nav-list a {
+  text-decoration: none;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.35rem 0;
+  border-block-end: 2px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+.nav-list a:hover {
+  color: var(--text);
+  border-color: var(--primary);
+}
+.nav-list a[aria-current="page"] {
+  color: var(--primary);
+  font-weight: 600;
+  border-color: var(--primary);
+}
+
+/* dropdown (Home 1 / Home 2) */
+.nav-dropdown { position: relative; }
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  padding: 0.35rem 0;
+  border-block-end: 2px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.dropdown-toggle:hover,
+.dropdown-toggle[aria-expanded="true"] { color: var(--text); border-color: var(--primary); }
+.dropdown-toggle[aria-current="page"] { color: var(--primary); font-weight: 700; border-color: var(--primary); }
+.dropdown-toggle .caret { font-size: 0.7rem; transition: transform 0.15s ease; }
+.dropdown-toggle[aria-expanded="true"] .caret { transform: rotate(180deg); }
+
+.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem;
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 0.6rem);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  min-width: 10rem;
+  display: none;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.dropdown-menu.open { display: block; }
+.dropdown-menu a {
+  display: block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 3px;
+  border-block-end: none;
+  white-space: nowrap;
+}
+.dropdown-menu a:hover {
+  background: rgba(217,99,26,0.15);
+  color: var(--text);
+}
+.dropdown-menu a[aria-current="page"] {
+  background: rgba(217,99,26,0.15);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* header actions: theme toggle, rtl toggle, book now (desktop) */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  order: 3;
+  flex-shrink: 0;
+}
+.icon-toggle {
+  background: none;
+  border: 1px solid var(--secondary);
+  color: var(--text);
+  border-radius: 999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+}
+.icon-toggle:hover { border-color: var(--primary); color: var(--primary); }
+.icon-toggle .icon-dark { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-light { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-dark { display: inline; }
+
+.rtl-toggle { width: auto; padding: 0 0.65rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+
+.book-btn {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border-radius: 3px;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.book-btn:hover {
+  background: var(--secondary);
+  box-shadow: 0 10px 22px rgba(217,99,26,0.32);
+  transform: translateY(-1px);
+}
+
+/* mobile-only Book Now (lives inside the collapsible menu) — hidden by default */
+.book-btn-mobile { display: none; }
+
+/* ==========================================================================
+   base tier (0–639px, mobile) — collapsible nav, mobile Book Now
+   ========================================================================== */
+@media (max-width: 639px) {
+  .nav-toggle { display: inline-block; }
+
+  /* positioned absolutely (not a flex item relying on flex-wrap to reach
+     a second line) so it can never compete with the header row for space —
+     see the nowrap note on .site-header .container below */
+  .nav-wrap {
+    display: none;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    justify-content: flex-start;
+    background: var(--surface-alt);
+    border-block-start: 1px solid var(--border);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    padding-block: 0.5rem 1rem;
+  }
+  .nav-wrap.open { display: flex; flex-direction: column; }
+  .nav-wrap nav { flex: initial; flex-direction: column; align-items: stretch; width: 100%; }
+
+  .nav-list { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
+  .nav-list li { width: 100%; }
+  .nav-list a { display: block; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .nav-dropdown { width: 100%; }
+  .dropdown-toggle { width: 100%; justify-content: space-between; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .dropdown-menu { position: static; box-shadow: none; border: none; background: transparent; border-radius: 0; min-width: 0; }
+  .dropdown-menu a { padding-inline-start: calc(var(--gutter) * 1.6); }
+
+  /* brand + theme/RTL toggles stay visible in the header bar itself at
+     every width; only the collapsible menu (nav-wrap) is hamburger-gated,
+     and it carries nothing but links + Book Now */
+  .header-actions { order: 2; margin-inline-start: auto; gap: 0.5rem; align-items: center; }
+  .nav-toggle { order: 3; margin-inline-start: 0.5rem; align-self: center; }
+  .book-btn-desktop { display: none; }
+  .book-btn-mobile {
+    display: block;
+    width: calc(100% - (2 * var(--gutter)));
+    text-align: center;
+    margin: 1rem var(--gutter) 0;
+  }
+
+  /* keep the logo mark, wordmark and header icons on one aligned baseline;
+     let the brand block shrink and truncate instead of ever overflowing,
+     so the tagline stays visible and the hamburger never wraps. nowrap is
+     safe now that .nav-wrap is positioned absolutely (above) instead of
+     being a flex item that relies on wrapping to reach a second line —
+     this also protects against OS-level text-size scaling (common on
+     Android/Galaxy phones), which can inflate rem-based icon/gap sizes
+     enough to tip a wrapping row over even at "safe" viewport widths. */
+  .site-header .container { position: relative; align-items: center; gap: 0.5rem; padding-inline: 1rem; flex-wrap: nowrap; }
+  /* flex-basis: 0% (not "auto") so the browser sizes this item from 0
+     rather than its full untruncated text width when deciding whether
+     the hamburger fits on this row — otherwise the ellipsis truncation
+     below only kicks in after wrapping has already happened, and on
+     narrow phones (~320px) the hamburger gets pushed to a second line. */
+  .site-header .brand { display: flex; gap: 0.45rem; align-items: center; flex: 1 1 0%; min-width: 0; }
+  .site-header .brand svg { width: 2rem; height: 2rem; flex-shrink: 0; }
+  .site-header .brand-copy { justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .site-header .brand-text, .site-header .brand-tag { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .site-header .brand-text { font-size: 0.95rem; line-height: 1.15; }
+  .site-header .brand-tag { font-size: 0.68rem; margin-block-start: 0.1rem; }
+  .header-actions { display: flex; flex-shrink: 0; gap: 0.35rem; }
+  .nav-toggle { flex-shrink: 0; padding: 0.4rem 0.5rem; margin-inline-start: 0.35rem; }
+  .icon-toggle { width: 1.85rem; height: 1.85rem; }
+  .rtl-toggle { font-size: 0.68rem; padding: 0 0.45rem; }
+}
+
+/* ==========================================================================
+   tier-2 (640–1023px, tablet) — nav still collapses (not enough width for
+   the full link row), but header chrome is roomier than on a phone
+   ========================================================================== */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .nav-toggle { display: inline-block; }
+
+  .nav-wrap {
+    display: none;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    justify-content: flex-start;
+    background: var(--surface-alt);
+    border-block-start: 1px solid var(--border);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    padding-block: 0.5rem 1rem;
+  }
+  .nav-wrap.open { display: flex; flex-direction: column; }
+  .nav-wrap nav { flex: initial; flex-direction: column; align-items: stretch; width: 100%; }
+
+  .nav-list { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
+  .nav-list li { width: 100%; }
+  .nav-list a { display: block; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .nav-dropdown { width: 100%; }
+  .dropdown-toggle { width: 100%; justify-content: space-between; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .dropdown-menu { position: static; box-shadow: none; border: none; background: transparent; border-radius: 0; min-width: 0; }
+  .dropdown-menu a { padding-inline-start: calc(var(--gutter) * 1.6); }
+
+  .header-actions { order: 2; margin-inline-start: auto; gap: 0.5rem; align-items: center; }
+  .nav-toggle { order: 3; margin-inline-start: 0.5rem; align-self: center; }
+  .book-btn-desktop { display: none; }
+  .book-btn-mobile {
+    display: block;
+    width: calc(100% - (2 * var(--gutter)));
+    text-align: center;
+    margin: 1rem var(--gutter) 0;
+  }
+
+  /* nowrap: safe now .nav-wrap is positioned absolutely instead of relying
+     on flex-wrap to reach a second line — also protects against OS-level
+     text-size scaling (common on Android/Galaxy phones) inflating
+     rem-based icon/gap sizes enough to tip a wrapping row over. */
+  .site-header .container { position: relative; align-items: center; gap: 0.6rem; flex-wrap: nowrap; }
+  .site-header .brand { display: flex; gap: 0.5rem; align-items: center; flex: 1 1 0%; min-width: 0; }
+  .site-header .brand svg { width: 2.35rem; height: 2.35rem; flex-shrink: 0; }
+  .site-header .brand-copy { justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .site-header .brand-text, .site-header .brand-tag { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .site-header .brand-text { font-size: 1.05rem; line-height: 1.15; }
+  .site-header .brand-tag { font-size: 0.68rem; margin-block-start: 0.1rem; }
+  .header-actions { display: flex; flex-shrink: 0; }
+  .nav-toggle { flex-shrink: 0; }
+  .icon-toggle { width: 2rem; height: 2rem; }
+  .rtl-toggle { font-size: 0.72rem; padding: 0 0.55rem; }
+}
+
+/* ==========================================================================
+   tier-3 (1024–1279px, laptop) & tier-4 (1280px+, desktop) — full inline
+   nav, desktop Book Now button; both tiers share the same header layout,
+   so one min-width query covers both
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .nav-toggle { display: none; }
+  .nav-wrap { display: flex; }
+  .book-btn-mobile { display: none; }
+}
+
+/* tier-3 only (1024–1279px): the full link row is tight against the space
+   available between the brand and header actions at this width — without
+   tightening, "Contact" wraps to a second line. Real devices can render
+   the nav font a little wider than our test measurements (font hinting,
+   fallback fonts), so this also shrinks the brand a notch to bank extra
+   safety margin rather than fitting to the exact pixel. Tier-4 (1280px+)
+   has enough room and keeps the normal, roomier sizing throughout. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .nav-list { gap: 0.3rem 0.65rem; }
+  .nav-list a, .dropdown-toggle { font-size: 0.88rem; }
+  .site-header .brand { gap: 0.5rem; }
+  .site-header .brand svg { width: 2.4rem; height: 2.4rem; }
+  .site-header .brand-text { font-size: 1.1rem; }
+  .site-header .brand-tag { font-size: 0.72rem; }
+}
+
+/* ---------- footer ---------- */
+.site-footer {
+  background: var(--charcoal);
+  color: var(--cream-dim);
+  padding: 3rem 0 2rem;
+  font-size: 0.92rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding-block-end: 2rem;
+  border-block-end: 1px solid rgba(245,237,225,0.12);
+}
+.footer-col h4 {
+  color: var(--cream);
+  font-size: 1rem;
+  margin-bottom: 0.85rem;
+}
+.footer-col p, .footer-col address { margin: 0 0 0.5em; font-style: normal; color: #FFFFFF; }
+.footer-contact-item { display: flex; align-items: center; gap: 0.55rem; margin-bottom: 0.6rem; }
+.footer-contact-item svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--secondary); }
+.footer-contact-item a { color: #FFFFFF; text-decoration: none; }
+.footer-contact-item a:hover { color: var(--primary); }
+.footer-links { list-style: none; margin: 0; padding: 0; }
+.footer-links li { margin-bottom: 0.55rem; }
+.footer-links a { color: #FFFFFF; text-decoration: none; }
+.footer-links a:hover { color: var(--primary); }
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+.footer-brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
+/* the wordmark must never break onto a second line — truncate with an
+   ellipsis instead if a narrow footer column ever gets tight (tablet
+   widths especially, where real-device font rendering can measure a
+   little wider than in testing). min-width: 0 lets the flex item actually
+   shrink below its text's natural width so the ellipsis can take effect. */
+.footer-brand .brand-copy { min-width: 0; }
+.footer-brand .brand-text,
+.footer-brand .brand-tag {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  padding-block-start: 1.5rem;
+}
+
+.footer-bottom a { color: var(--secondary); text-decoration: none; }
+.footer-bottom a:hover { color: var(--primary); }
+
+/* ==========================================================================
+   base tier (0–639px, mobile) — center the footer, and tighten the gap
+   between the logo mark and the wordmark so they read as one lockup
+   ========================================================================== */
+@media (max-width: 639px) {
+  .footer-grid { text-align: center; grid-template-columns: 1fr; }
+  .footer-col address { text-align: center; }
+  .footer-brand {
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  .footer-brand svg { width: 2.5rem; height: 2.5rem; }
+  .footer-contact-item { justify-content: center; }
+  .footer-bottom { justify-content: center; text-align: center; }
+}
+
+/* ==========================================================================
+   tier-2 (640–1023px, tablet)
+   ========================================================================== */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ==========================================================================
+   tier-3 (1024–1279px, laptop) & tier-4 (1280px+, desktop) — same 4-column
+   footer layout at both sizes, so one min-width query covers both
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; }
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ==========================================================================
+   Scroll-reveal animation — one small orchestrated pattern reused by every
+   card grid on the page. Skips entirely for prefers-reduced-motion.
+   ========================================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ==========================================================================
+   Home page content sections — alternating surfaces, theme-aware.
+   All section content is centered by default; asymmetric layouts opt out
+   explicitly with their own text-align.
+   ========================================================================== */
+
+main { text-align: center; }
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--charcoal);
+  color: var(--cream);
+  padding: 4.5rem 0 4rem;
+  text-align: center;
+}
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  animation: heroVideoZoom 12s ease-out both;
+}
+@keyframes heroVideoZoom {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-video { display: none; }
+}
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(160deg, rgba(43,36,32,0.88) 0%, rgba(43,36,32,0.62) 45%, rgba(32,26,34,0.85) 100%);
+  pointer-events: none;
+}
+.hero .container {
+  position: relative;
+  z-index: 2;
+}
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+/* staggered hero entrance — each element fades/rises in slightly after the previous one */
+.hero-eyebrow,
+.hero h1,
+.hero p.lede,
+.hero-actions {
+  animation: heroFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero-eyebrow { animation-delay: 0.05s; }
+.hero h1 { animation-delay: 0.18s; }
+.hero p.lede { animation-delay: 0.32s; }
+.hero-actions { animation-delay: 0.46s; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-eyebrow, .hero h1, .hero p.lede, .hero-actions { animation: none; }
+}
+.hero-eyebrow {
+  color: var(--cream-dim);
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+}
+.hero h1 { color: #FFFFFF; font-size: clamp(2.1rem, 5vw, 3.3rem); max-width: 18ch; margin-inline: auto; }
+.hero p.lede { color: var(--cream-dim); font-size: 1.1rem; max-width: 46ch; margin-inline: auto; }
+.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.75rem; justify-content: center; }
+.btn-primary {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+.btn-primary:hover {
+  background: var(--secondary);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(217,99,26,0.32);
+}
+.btn-primary:active { transform: translateY(0); box-shadow: none; }
+.btn-ghost {
+  color: var(--cream);
+  padding: 0.8rem 1.5rem;
+  border: 1px solid var(--secondary);
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 1rem;
+  display: inline-block;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+.btn-ghost:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+}
+
+/* variant for use on light section backgrounds (e.g. the services page link) */
+.btn-ghost-light { color: var(--text); border-color: var(--border); }
+.btn-ghost-light:hover {
+  color: #FFFFFF;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+section.page-section { padding: 4rem 0; }
+.section-white { background: var(--surface); }
+.section-cream { background: var(--page-bg); }
+.section-ember { background: var(--surface-ember); }
+.section-rust { background: var(--surface-rust); }
+
+/* seasonal reminder banner — replaces the old "how it works" section */
+.seasonal-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2.5rem 0;
+}
+.seasonal-banner-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border-inline-start: 4px solid var(--primary);
+  padding-inline-start: 1.5rem;
+  text-align: start;
+}
+.seasonal-text { flex: 1 1 24rem; }
+.seasonal-text .kicker { color: var(--primary); font-weight: 600; margin-bottom: 0.3rem; display: block; }
+.seasonal-text h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); margin-bottom: 0.5rem; }
+.seasonal-text p { color: var(--text); margin: 0; max-width: 46ch; }
+.seasonal-banner .btn-primary { flex-shrink: 0; }
+@media (max-width: 639px) {
+  .seasonal-banner-inner { flex-direction: column; align-items: flex-start; text-align: start; }
+  /* .seasonal-text's flex-basis (24rem) sizes the flex container's main
+     axis — once flex-direction flips to column that axis is height, so
+     without this reset the text block gets forced to a 24rem-tall column
+     with a blank gap below it instead of hugging its own content. */
+  .seasonal-text { flex: none; width: 100%; }
+  .seasonal-banner .btn-primary { width: 100%; text-align: center; }
+}
+
+.section-head { max-width: 42rem; margin-inline: auto; margin-bottom: 2.25rem; text-align: center; }
+.section-head .kicker { color: var(--primary); font-weight: 600; margin-bottom: 0.35rem; display: block; }
+.section-head h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+.section-head p { color: var(--text-soft); margin: 0 auto; max-width: 62ch; }
+
+/* fire hazard prevention */
+.hazard-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.hazard-card {
+  border: 2px solid var(--border);
+  border-inline-start: 4px solid var(--safety);
+  background: var(--surface);
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  text-align: start;
+}
+.hazard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  border-color: var(--primary);
+  border-inline-start-color: var(--primary);
+}
+.hazard-card { display: flex; flex-direction: column; }
+.hazard-card h3 { font-size: 1.05rem; margin-bottom: 0.4rem; }
+.hazard-card p { margin: 0; color: var(--text-soft); font-size: 0.97rem; }
+/* 2 columns on tablet (640–1023px) — 4 columns there squeezed each card to
+   ~140px, breaking the text to one word per line. Full row of 4 only from
+   1024px up, where there's enough room to stay readable. Grid items
+   stretch to equal height by default (align-items: stretch), so cards
+   line up evenly regardless of how much text each one has. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hazard-grid { grid-template-columns: repeat(2, 1fr); align-items: stretch; }
+}
+@media (min-width: 1024px) {
+  .hazard-grid { grid-template-columns: repeat(4, 1fr); align-items: stretch; }
+}
+
+/* services — background-image tiles with dark gradient overlay */
+.service-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+.service-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1 1 20rem;
+  max-width: 22rem;
+  aspect-ratio: 4 / 5;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  overflow: hidden;
+  padding: 1.5rem 1.5rem 3.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  text-align: start;
+}
+.service-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1);
+  transition: transform 0.5s ease;
+  z-index: 0;
+}
+.service-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(43,36,32,0.08) 32%, rgba(43,36,32,0.93) 100%);
+  z-index: 1;
+}
+.service-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  border-color: var(--primary);
+}
+.service-tile:hover::after { transform: scale(1.09); }
+.service-tile-meta {
+  position: absolute;
+  top: 1rem;
+  inset-inline-end: 1rem;
+  z-index: 2;
+  background: rgba(255,255,255,0.92);
+  color: var(--rust);
+  font-weight: 600;
+  font-size: 0.76rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+}
+.service-tile-text { position: relative; z-index: 2; }
+.service-tile-text h3 { color: #FFFFFF; margin: 0 0 0.4rem; font-size: 1.25rem; }
+.service-tile-text p { color: rgba(255,255,255,0.9); margin: 0; font-size: 0.95rem; line-height: 1.5; }
+.service-tile-book {
+  position: absolute;
+  bottom: 1.1rem;
+  inset-inline-end: 1.1rem;
+  z-index: 2;
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.service-tile-book:hover { background: var(--secondary); transform: translateY(-1px); }
+
+.service-tile-sweep::after { background-image: url("../images/chimney sweeping.jpg"); }
+.service-tile-inspect::after { background-image: url("../images/safety inspection.jpg"); }
+.service-tile-cap::after { background-image: url("../images/cap installation.jpg"); }
+
+/* why choose us — card grid with Lucide-style icons */
+.trust-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.trust-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.trust-card:hover { transform: translateY(-6px); box-shadow: 0 18px 32px rgba(0,0,0,0.12); border-color: var(--primary); }
+.trust-card { display: flex; flex-direction: column; }
+.trust-icon {
+  width: 3rem; height: 3rem;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--surface-alt);
+  color: var(--secondary);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.35s ease, background-color 0.3s ease, color 0.3s ease;
+}
+.trust-card:hover .trust-icon {
+  transform: scale(1.12) rotate(-6deg);
+  background: var(--primary);
+  color: #FFFFFF;
+}
+.trust-icon svg { width: 1.5rem; height: 1.5rem; }
+.trust-card h3 { font-size: 1.05rem; margin-bottom: 0.35rem; }
+.trust-card p { margin: 0; color: var(--text-soft); font-size: 0.95rem; }
+/* Same fix as .hazard-grid: 2 columns on tablet, 4 only from 1024px up —
+   4 columns at 640px squeezed each card too narrow and wrapped the text. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .trust-grid { grid-template-columns: repeat(2, 1fr); align-items: stretch; }
+}
+@media (min-width: 1024px) {
+  .trust-grid { grid-template-columns: repeat(4, 1fr); align-items: stretch; }
+}
+
+/* testimonials — carousel, driven by home.js */
+.testimonial-carousel { position: relative; max-width: 42rem; margin-inline: auto; }
+.testimonial-track-wrap { overflow: hidden; }
+.testimonial-track {
+  display: flex;
+  transition: transform 0.4s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-track { transition: none; }
+}
+.testimonial-slide { flex: 0 0 100%; padding: 0 0.25rem; }
+.testimonial-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1.75rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.testimonial-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 16px 30px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+}
+.testimonial-card p.quote { font-family: var(--font-display); font-size: 1.15rem; color: var(--text); margin-bottom: 1rem; }
+.testimonial-card .cite { color: var(--text-soft); font-size: 0.9rem; }
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.carousel-arrow {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.carousel-arrow:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: scale(1.1);
+  box-shadow: 0 6px 14px rgba(217,99,26,0.2);
+}
+.carousel-dots { display: flex; gap: 0.5rem; }
+.carousel-dot {
+  width: 0.55rem; height: 0.55rem;
+  border-radius: 50%;
+  border: none;
+  background: var(--border);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.carousel-dot:hover { transform: scale(1.25); }
+.carousel-dot[aria-current="true"] { background: var(--primary); }
+
+/* final CTA — image background, properly centered */
+.cta-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(160deg, rgba(43,36,32,0.86) 0%, rgba(43,36,32,0.72) 50%, rgba(43,36,32,0.86) 100%),
+    url("../images/about-hero.jpg") center/cover no-repeat;
+  padding: 4.5rem 0;
+  text-align: center;
+}
+.cta-block {
+  position: relative;
+  z-index: 1;
+  max-width: 40rem;
+  margin-inline: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.cta-block h2 { color: #FFFFFF; margin-bottom: 0.5rem; }
+.cta-block p { color: var(--cream-dim); max-width: 46ch; margin: 0 0 1.75rem; }

@@ -1,0 +1,890 @@
+/* ==========================================================================
+   WarmNest Chimney — Seasonal Booking Reminder page stylesheet
+   Same design tokens, header, and footer as Home 1 / About / Blog,
+   plus a unique demand-calendar grid, step cards, and reminder panel.
+   Breakpoints (non-overlapping, min-width):
+     base   : 0–639px    (mobile)
+     tier-2 : 640–1023px (tablet)
+     tier-3 : 1024–1279px (laptop)
+     tier-4 : 1280px+    (desktop)
+   Supports: [data-theme="dark"] on <html>, dir="rtl" on <html>.
+   ========================================================================== */
+
+:root {
+  --charcoal:  #2B2420;
+  --ember:     #D9631A;
+  --rust:      #A8431E;
+  --cream:     #F5EDE1;
+  --slate:     #5B564F;
+  --safety:    #B33A2E;
+  --charcoal-soft: #3A322C;
+  --cream-dim: #EAE0CF;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", "Source Sans 3", -apple-system, sans-serif;
+  --font-accent: "Kalam", cursive;
+
+  --content-max: 76rem;
+  --gutter: 1.25rem;
+
+  --primary: #D9631A;
+  --secondary: #A8431E;
+
+  --page-bg: var(--cream);
+  --text: var(--charcoal);
+  --text-soft: var(--slate);
+  --surface: #FFFFFF;
+  --surface-alt: var(--cream-dim);
+  --surface-ember: #FBE8D9;
+  --surface-rust: #F3DCD0;
+  --border: rgba(43,36,32,0.12);
+}
+
+:root[data-theme="dark"] {
+  --primary: #E2701F;
+  --secondary: #C2551F;
+
+  --page-bg: #1B1714;
+  --text: var(--cream);
+  --text-soft:#FFFFFF;
+  --surface: #241F1B;
+  --surface-alt: #2E2721;
+  --surface-ember: #2E2118;
+  --surface-rust: #2E1B12;
+  --border: rgba(245,237,225,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--page-bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.5em;
+  color: var(--text);
+}
+.container {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---------- header ---------- */
+.site-header {
+  background: var(--surface);
+  color: var(--text);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-block-end: 1px solid var(--border);
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  min-height: 4.9rem;
+  flex-wrap: wrap;
+  padding-block: 0.7rem;
+}
+
+.brand { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; flex-shrink: 0; }
+.brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
+.brand-copy { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
+.brand-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+:root[data-theme="dark"] .site-header .brand-text { color: #FFFFFF; }
+.site-footer .brand-text { color: #FFFFFF; }
+.brand-text span { color: var(--primary); }
+.brand-tag {
+  font-family: var(--font-accent);
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  margin-block-start: 0.15rem;
+}
+.site-footer .brand-tag { color: #FFFFFF; }
+
+.logo-fill { fill: var(--text); }
+.logo-stroke { stroke: var(--text); }
+.logo-cutout { fill: var(--surface); }
+:root[data-theme="dark"] .site-header .logo-fill { fill: #FFFFFF; }
+:root[data-theme="dark"] .site-header .logo-stroke { stroke: #FFFFFF; }
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--secondary);
+  border-radius: 3px;
+  padding: 0.5rem 0.65rem;
+  cursor: pointer;
+  order: 2;
+  line-height: 0;
+}
+.nav-toggle:hover { border-color: var(--primary); }
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 1.25rem;
+  height: 0.85rem;
+}
+.hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--text);
+  border-radius: 1px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform-origin: center;
+}
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.nav-wrap {
+  display: flex;
+  justify-content: center;
+  order: 1;
+  flex: 1;
+  min-width: 0;
+}
+.nav-wrap nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+.nav-list {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 1.35rem;
+  margin: 0;
+  padding: 0;
+}
+.nav-list a {
+  text-decoration: none;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.35rem 0;
+  border-block-end: 2px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+.nav-list a:hover { color: var(--text); border-color: var(--primary); }
+.nav-list a[aria-current="page"] { color: var(--primary); font-weight: 600; border-color: var(--primary); }
+
+.nav-dropdown { position: relative; }
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  padding: 0.35rem 0;
+  border-block-end: 2px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.dropdown-toggle:hover,
+.dropdown-toggle[aria-expanded="true"] { color: var(--text); border-color: var(--primary); }
+.dropdown-toggle[aria-current="page"] { color: var(--primary); font-weight: 700; border-color: var(--primary); }
+.dropdown-toggle .caret { font-size: 0.7rem; transition: transform 0.15s ease; }
+.dropdown-toggle[aria-expanded="true"] .caret { transform: rotate(180deg); }
+
+.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem;
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 0.6rem);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  min-width: 10rem;
+  display: none;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.dropdown-menu.open { display: block; }
+.dropdown-menu a {
+  display: block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 3px;
+  border-block-end: none;
+  white-space: nowrap;
+}
+.dropdown-menu a:hover { background: rgba(217,99,26,0.15); color: var(--text); }
+.dropdown-menu a[aria-current="page"] { background: rgba(217,99,26,0.15); color: var(--primary); font-weight: 700; }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  order: 3;
+  flex-shrink: 0;
+}
+.icon-toggle {
+  background: none;
+  border: 1px solid var(--secondary);
+  color: var(--text);
+  border-radius: 999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+}
+.icon-toggle:hover { border-color: var(--primary); color: var(--primary); }
+.icon-toggle .icon-dark { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-light { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-dark { display: inline; }
+
+.rtl-toggle { width: auto; padding: 0 0.65rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+.book-btn {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border-radius: 3px;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.book-btn:hover { background: var(--secondary);
+box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
+
+.book-btn-mobile { display: none; }
+
+/* ==========================================================================
+   base (0–639px, mobile)
+   ========================================================================== */
+@media (max-width: 639px) {
+  .nav-toggle { display: inline-block; }
+
+  /* positioned absolutely (not a flex item relying on flex-wrap to reach
+     a second line) so it can never compete with the header row for space —
+     see the nowrap note on .site-header .container below */
+  .nav-wrap {
+    display: none;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    justify-content: flex-start;
+    background: var(--surface-alt);
+    border-block-start: 1px solid var(--border);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    padding-block: 0.5rem 1rem;
+  }
+  .nav-wrap.open { display: flex; flex-direction: column; }
+  .nav-wrap nav { flex: initial; flex-direction: column; align-items: stretch; width: 100%; }
+
+  .nav-list { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
+  .nav-list li { width: 100%; }
+  .nav-list a { display: block; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .nav-dropdown { width: 100%; }
+  .dropdown-toggle { width: 100%; justify-content: space-between; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .dropdown-menu { position: static; box-shadow: none; border: none; background: transparent; border-radius: 0; min-width: 0; }
+  .dropdown-menu a { padding-inline-start: calc(var(--gutter) * 1.6); }
+
+  .header-actions { order: 2; margin-inline-start: auto; gap: 0.5rem; align-items: center; }
+  .nav-toggle { order: 3; margin-inline-start: 0.5rem; align-self: center; }
+  .book-btn-desktop { display: none; }
+  .book-btn-mobile {
+    display: block;
+    width: calc(100% - (2 * var(--gutter)));
+    text-align: center;
+    margin: 1rem var(--gutter) 0;
+  }
+
+  .site-header .container { position: relative; align-items: center; gap: 0.5rem; padding-inline: 1rem; flex-wrap: nowrap; }
+  .site-header .brand { display: flex; gap: 0.45rem; align-items: center; flex: 1 1 0%; min-width: 0; }
+  .site-header .brand svg { width: 2rem; height: 2rem; flex-shrink: 0; }
+  .site-header .brand-copy { justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .site-header .brand-text, .site-header .brand-tag { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .site-header .brand-text { font-size: 0.95rem; line-height: 1.15; }
+  .site-header .brand-tag { font-size: 0.68rem; margin-block-start: 0.1rem; }
+  .header-actions { display: flex; flex-shrink: 0; gap: 0.35rem; }
+  .nav-toggle { flex-shrink: 0; padding: 0.4rem 0.5rem; margin-inline-start: 0.35rem; }
+  .icon-toggle { width: 1.85rem; height: 1.85rem; }
+  .rtl-toggle { font-size: 0.68rem; padding: 0 0.45rem; }
+}
+
+/* ==========================================================================
+   tier-2 (640–1023px, tablet) — nav still collapses (not enough width for
+   the full link row), but header chrome is roomier than on a phone
+   ========================================================================== */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .nav-toggle { display: inline-block; }
+
+  .nav-wrap {
+    display: none;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    justify-content: flex-start;
+    background: var(--surface-alt);
+    border-block-start: 1px solid var(--border);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    padding-block: 0.5rem 1rem;
+  }
+  .nav-wrap.open { display: flex; flex-direction: column; }
+  .nav-wrap nav { flex: initial; flex-direction: column; align-items: stretch; width: 100%; }
+
+  .nav-list { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
+  .nav-list li { width: 100%; }
+  .nav-list a { display: block; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .nav-dropdown { width: 100%; }
+  .dropdown-toggle { width: 100%; justify-content: space-between; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .dropdown-menu { position: static; box-shadow: none; border: none; background: transparent; border-radius: 0; min-width: 0; }
+  .dropdown-menu a { padding-inline-start: calc(var(--gutter) * 1.6); }
+
+  .header-actions { order: 2; margin-inline-start: auto; gap: 0.5rem; align-items: center; }
+  .nav-toggle { order: 3; margin-inline-start: 0.5rem; align-self: center; }
+  .book-btn-desktop { display: none; }
+  .book-btn-mobile {
+    display: block;
+    width: calc(100% - (2 * var(--gutter)));
+    text-align: center;
+    margin: 1rem var(--gutter) 0;
+  }
+
+  .site-header .container { position: relative; align-items: center; gap: 0.6rem; flex-wrap: nowrap; }
+  .site-header .brand { display: flex; gap: 0.5rem; align-items: center; flex: 1 1 0%; min-width: 0; }
+  .site-header .brand svg { width: 2.35rem; height: 2.35rem; flex-shrink: 0; }
+  .site-header .brand-copy { justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .site-header .brand-text, .site-header .brand-tag { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .site-header .brand-text { font-size: 1.05rem; line-height: 1.15; }
+  .site-header .brand-tag { font-size: 0.68rem; margin-block-start: 0.1rem; }
+  .header-actions { display: flex; flex-shrink: 0; }
+  .nav-toggle { flex-shrink: 0; }
+  .icon-toggle { width: 2rem; height: 2rem; }
+  .rtl-toggle { font-size: 0.72rem; padding: 0 0.55rem; }
+}
+
+/* ==========================================================================
+   tier-3 (1024–1279px, laptop) & tier-4 (1280px+, desktop) — full inline
+   nav, desktop Book Now button; both tiers share the same header layout,
+   so one min-width query covers both
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .nav-toggle { display: none; }
+  .nav-wrap { display: flex; }
+  .book-btn-mobile { display: none; }
+}
+
+/* tier-3 only (1024–1279px): the full link row is tight against the space
+   available between the brand and header actions at this width — without
+   tightening, "Contact" wraps to a second line. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .nav-list { gap: 0.3rem 0.65rem; }
+  .nav-list a, .dropdown-toggle { font-size: 0.88rem; }
+  .site-header .brand { gap: 0.5rem; }
+  .site-header .brand svg { width: 2.4rem; height: 2.4rem; }
+  .site-header .brand-text { font-size: 1.1rem; }
+  .site-header .brand-tag { font-size: 0.72rem; }
+}
+
+/* ---------- footer ---------- */
+.site-footer {
+  background: var(--charcoal);
+  color: var(--cream-dim);
+  padding: 3rem 0 2rem;
+  font-size: 0.92rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding-block-end: 2rem;
+  border-block-end: 1px solid rgba(245,237,225,0.12);
+}
+.footer-col h4 { color: var(--cream); font-size: 1rem; margin-bottom: 0.85rem; }
+.footer-col p, .footer-col address { margin: 0 0 0.5em; font-style: normal; color: #FFFFFF; }
+.footer-contact-item { display: flex; align-items: center; gap: 0.55rem; margin-bottom: 0.6rem; }
+.footer-contact-item svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--secondary); }
+.footer-contact-item a { color: #FFFFFF; text-decoration: none; }
+.footer-contact-item a:hover { color: var(--primary); }
+.footer-links { list-style: none; margin: 0; padding: 0; }
+.footer-links li { margin-bottom: 0.55rem; }
+.footer-links a { color: #FFFFFF; text-decoration: none; }
+.footer-links a:hover { color: var(--primary); }
+.footer-brand { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; }
+.footer-brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  padding-block-start: 1.5rem;
+}
+.footer-bottom a { color: var(--secondary); text-decoration: none; }
+.footer-bottom a:hover { color: var(--primary); }
+
+@media (max-width: 639px) {
+  .footer-grid { text-align: center; }
+  .footer-col address { text-align: center; }
+  .footer-brand { justify-content: center; }
+  .footer-contact-item { justify-content: center; }
+  .footer-bottom { justify-content: center; text-align: center; }
+}
+@media (min-width: 640px) { .footer-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; } }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- scroll-reveal animation ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* entrance pop-in animation for cards, matching the Services page convention */
+@keyframes cardPopIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- shared buttons ---------- */
+.btn-primary {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  border-radius: 3px;
+  text-decoration: none;
+  display: inline-block;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+.btn-primary:hover {
+  background: var(--secondary);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  color: var(--text);
+  padding: 0.8rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  text-decoration: none;
+  font-size: 1rem;
+  display: inline-block;
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+.btn-secondary:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Seasonal reminder page content
+   ========================================================================== */
+
+section.page-section { padding: 4rem 0; }
+.section-white { background: var(--surface); }
+.section-ember { background: var(--surface-ember); }
+
+.section-head { max-width: 46rem; margin-inline: auto; margin-bottom: 2.25rem; text-align: center; }
+.section-head .kicker { color: var(--primary); font-weight: 600; margin-bottom: 0.35rem; display: block; }
+.section-head h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+.section-head p { color: var(--text-soft); margin: 0 auto; max-width: 62ch; }
+
+/* ---------- hero — modern split layout with decorative blobs ---------- */
+.seasonal-hero-split {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(43,36,32,0.92) 0%, rgba(58,50,44,0.88) 55%, rgba(168,67,30,0.82) 130%),
+    url("../images/blog-1.jpg") center/cover no-repeat;
+  color: var(--cream);
+  padding: 6rem 0;
+}
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+.hero-blob-1 {
+  width: 26rem;
+  height: 26rem;
+  background: var(--primary);
+  top: -10rem;
+  inset-inline-end: -8rem;
+}
+.hero-blob-2 {
+  width: 20rem;
+  height: 20rem;
+  background: #6B7FD7;
+  bottom: -8rem;
+  inset-inline-start: -6rem;
+  opacity: 0.2;
+}
+.hero-split-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.hero-split-text { max-width: 44rem; margin-inline: auto; }
+.hero-split-text .hero-eyebrow { color: var(--cream-dim); font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.hero-split-text h1 {
+  color: #FFFFFF;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  max-width: 26ch;
+  margin-inline: auto;
+}
+.hero-split-text h1 span { color: #FFFFFF; }
+.hero-split-text .lede { color: var(--cream-dim); font-size: 1.05rem; max-width: 46ch; margin: 0.75rem auto 0; }
+.seasonal-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+.seasonal-hero-actions .btn-secondary { color: var(--cream); border-color: var(--secondary); }
+.seasonal-hero-actions .btn-secondary:hover { color: var(--primary); border-color: var(--primary); }
+
+@media (max-width: 639px) {
+  .seasonal-hero-split { padding: 4.5rem 0; }
+}
+
+/* ---------- seasonal offers — same card convention as the Services page ---------- */
+.offer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 1.5rem;
+}
+.offer-card {
+  min-width: 0;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  animation: cardPopIn 0.6s ease both;
+}
+.offer-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  border-color: var(--primary);
+}
+.offer-card.reveal:nth-child(1) { transition-delay: 0s; animation-delay: 0s; }
+.offer-card.reveal:nth-child(2) { transition-delay: 0.1s; animation-delay: 0.1s; }
+.offer-card.reveal:nth-child(3) { transition-delay: 0.2s; animation-delay: 0.2s; }
+.offer-discount {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.4rem;
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
+}
+.offer-discount small { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; margin-left: 0.3rem; color: var(--text-soft); }
+.offer-card h3 { font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--primary); }
+.offer-card p { color: var(--text-soft); font-size: 0.92rem; line-height: 1.5; margin: 0 0 1.5rem; flex: 1; }
+.offer-btn {
+  align-self: center;
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border-radius: 3px;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.offer-btn:hover {
+  background: var(--secondary);
+  color: #FFFFFF;
+  box-shadow: 0 10px 22px rgba(217,99,26,0.32);
+  transform: translateY(-1px);
+}
+
+@media (min-width: 640px) and (max-width: 1199px) {
+  /* flex + justify-content:center (not grid) so the leftover 3rd card
+     centers under the first two instead of sitting flush-left in a grid
+     column — same fix applied to the blog related-post cards. */
+  .offer-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; }
+  .offer-card { flex: 0 1 calc(50% - 0.75rem); max-width: calc(50% - 0.75rem); }
+}
+/* 1200px (not 1280px) — on Windows/Linux, a vertical scrollbar shrinks the
+   CSS viewport by ~15-17px versus the window's reported/outer width, so a
+   maximized 1280px-wide display can evaluate media queries at ~1264px.
+   1200px leaves enough buffer that any genuinely desktop-width screen
+   still gets the 3-across row. */
+@media (min-width: 1200px) { .offer-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ---------- seasonal demand — bar chart visualization ---------- */
+.demand-chart {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  align-items: end;
+  gap: 0.6rem;
+  height: 14rem;
+  padding: 0 0.5rem;
+}
+.demand-bar-col {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+.demand-bar {
+  width: 100%;
+  max-width: 2.5rem;
+  height: var(--bar-height);
+  border-radius: 6px 6px 3px 3px;
+  background: var(--border);
+  transition: transform 0.3s ease, filter 0.3s ease;
+  transform-origin: bottom;
+}
+.demand-bar-col:hover .demand-bar { transform: scaleY(1.04); filter: brightness(1.08); }
+.demand-month { margin-top: 0.6rem; font-size: 0.8rem; font-weight: 600; color: var(--text-soft); }
+.demand-tip {
+  position: absolute;
+  bottom: calc(100% + 0.6rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  width: 9rem;
+  background: var(--charcoal);
+  color: #FFFFFF;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  padding: 0.55rem 0.7rem;
+  border-radius: 6px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 2;
+}
+.demand-bar-col:hover .demand-tip { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.demand-bar-col[data-level="verylow"] .demand-bar { background: #4C8C5B; }
+.demand-bar-col[data-level="low"] .demand-bar { background: #7BA05B; }
+.demand-bar-col[data-level="medium"] .demand-bar { background: #D9A73B; }
+.demand-bar-col[data-level="high"] .demand-bar { background: var(--secondary); }
+.demand-bar-col[data-level="veryhigh"] .demand-bar { background: var(--safety); }
+
+.demand-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+.legend-item { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-soft); }
+.legend-dot { width: 0.65rem; height: 0.65rem; border-radius: 50%; display: inline-block; }
+.dot-verylow { background: #4C8C5B; }
+.dot-low { background: #7BA05B; }
+.dot-medium { background: #D9A73B; }
+.dot-high { background: var(--secondary); }
+.dot-veryhigh { background: var(--safety); }
+
+/* base (0–639px): narrower phone screen can't fit 6 columns at a legible
+   bar width, so this drops to 4 and lets the last 2 months wrap to a
+   second row; the tooltip also has to shrink or it overflows past the
+   viewport edge on the outer columns. */
+@media (max-width: 639px) {
+  .demand-chart { grid-template-columns: repeat(4, 1fr); height: 12rem; row-gap: 1.5rem; }
+  /* 7rem (not 7.5rem) — on the narrowest phones (~320px) the outer
+     columns' centers sit close enough to the edge that a wider tooltip
+     clips past the viewport and adds horizontal scroll. */
+  .demand-tip { width: 7rem; font-size: 0.72rem; }
+}
+
+/* tier-2 (640–1023px, tablet): full 6-column row fits, but at the narrow
+   end of this range (~640px) a 9rem tooltip anchored to an outer column
+   (Jan/Dec) can clip against the viewport edge — same fix as the mobile
+   tier, just less aggressive since there's more room. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .demand-tip { width: 8rem; }
+}
+
+/* how reminders work — connected stepper, same card convention as the Services page */
+.reminder-step-grid { position: relative; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.reminder-step-card {
+  position: relative;
+  min-width: 0;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  animation: cardPopIn 0.6s ease both;
+}
+.reminder-step-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  border-color: var(--primary);
+}
+.reminder-step-card.reveal:nth-child(1) { transition-delay: 0s; animation-delay: 0s; }
+.reminder-step-card.reveal:nth-child(2) { transition-delay: 0.1s; animation-delay: 0.1s; }
+.reminder-step-card.reveal:nth-child(3) { transition-delay: 0.2s; animation-delay: 0.2s; }
+.reminder-step-number {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #FFFFFF;
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+.reminder-step-card:hover .reminder-step-number { transform: scale(1.12) rotate(-6deg); }
+.reminder-step-card h3 { font-size: 1.05rem; margin-bottom: 0.35rem; color: var(--primary); }
+.reminder-step-card p { margin: 0; color: var(--text-soft); font-size: 0.95rem; }
+@media (min-width: 640px) and (max-width: 1199px) {
+  /* flex + justify-content:center (not grid) so the leftover 3rd card
+     centers under the first two instead of sitting flush-left in a grid
+     column — same fix applied to the blog related-post cards. The
+     connector line is 3-column-row math (16.5%/16.5% insets), so it's
+     held back to the 1200px+ tier where all 3 cards share one row. */
+  .reminder-step-grid { display: flex; flex-wrap: wrap; justify-content: center; }
+  .reminder-step-card { flex: 0 1 calc(50% - 0.75rem); max-width: calc(50% - 0.75rem); }
+}
+/* 1200px, not 1280px — see the .offer-grid comment above: a vertical
+   scrollbar can shrink the CSS viewport below a nominally "1280px" window
+   on Windows/Linux, so 1200px leaves a safety buffer. */
+@media (min-width: 1200px) {
+  .reminder-step-grid { grid-template-columns: repeat(3, 1fr); }
+  .reminder-step-grid::before {
+    content: "";
+    position: absolute;
+    top: 3.35rem;
+    left: 16.5%;
+    right: 16.5%;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+}
+
+/* reminder signup panel — same card convention as the Services page */
+.reminder-panel {
+  background: var(--surface-ember);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.75rem;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  animation: cardPopIn 0.6s ease both;
+}
+.reminder-panel:hover {
+  border-color: var(--primary);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transform: translateY(-6px);
+}
+.reminder-panel-text { flex: 1 1 22rem; }
+.reminder-panel-text h2 { font-size: clamp(1.3rem, 2.5vw, 1.7rem); margin-bottom: 0.4rem; }
+.reminder-panel-text p { color: var(--text-soft); margin: 0; max-width: 42ch; }
+.reminder-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  flex: 1 1 20rem;
+}
+.reminder-form input[type="email"] {
+  flex: 1 1 12rem;
+  min-width: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.reminder-form input[type="email"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(217,99,26,0.18);
+}
+.reminder-form .btn-primary {
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.reminder-form .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(217,99,26,0.32);
+}

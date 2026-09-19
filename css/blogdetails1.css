@@ -1,0 +1,771 @@
+/* ==========================================================================
+   WarmNest Chimney — Blog article page stylesheet
+   Same design tokens, header, and footer as Home 1 / About / Blog,
+   plus a unique article-reading layout, pull quote, author card,
+   and related-posts grid. No final CTA on this page by design.
+   Breakpoints (non-overlapping, explicit min/max on every query, matching
+   home.css / about.css / blog.css):
+     base   : 0–639px    (mobile)
+     tier-2 : 640–1023px (tablet)
+     tier-3 : 1024–1279px (laptop)
+     tier-4 : 1280px+    (desktop)
+   Where tier-3 and tier-4 share the same layout, one "(min-width: 1024px)"
+   query covers both, same convention as home.css.
+   Supports: [data-theme="dark"] on <html>, dir="rtl" on <html>.
+   ========================================================================== */
+
+:root {
+  --charcoal:  #2B2420;
+  --ember:     #D9631A;
+  --rust:      #A8431E;
+  --cream:     #F5EDE1;
+  --slate:     #5B564F;
+  --safety:    #B33A2E;
+  --charcoal-soft: #3A322C;
+  --cream-dim: #EAE0CF;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", "Source Sans 3", -apple-system, sans-serif;
+  --font-accent: "Kalam", cursive;
+
+  --content-max: 76rem;
+  --gutter: 1.25rem;
+
+  --primary: #D9631A;
+  --secondary: #A8431E;
+
+  --page-bg: var(--cream);
+  --text: var(--charcoal);
+  --text-soft: var(--slate);
+  --surface: #FFFFFF;
+  --surface-alt: var(--cream-dim);
+  --surface-ember: #FBE8D9;
+  --surface-rust: #F3DCD0;
+  --border: rgba(43,36,32,0.12);
+}
+
+:root[data-theme="dark"] {
+  --primary: #E2701F;
+  --secondary: #C2551F;
+
+  --page-bg: #1B1714;
+  --text: var(--cream);
+  --text-soft:#FFFFFF;
+  --surface: #241F1B;
+  --surface-alt: #2E2721;
+  --surface-ember: #2E2118;
+  --surface-rust: #2E1B12;
+  --border: rgba(245,237,225,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { max-width: 100%; overflow-x: clip; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--page-bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.5em;
+  color: var(--text);
+}
+.container {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---------- header ---------- */
+.site-header {
+  background: var(--surface);
+  color: var(--text);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-block-end: 1px solid var(--border);
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  min-height: 4.9rem;
+  padding-block: 0.7rem;
+}
+
+.brand { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; flex-shrink: 0; }
+.brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
+.brand-copy { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
+.brand-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+:root[data-theme="dark"] .site-header .brand-text { color: #FFFFFF; }
+.site-footer .brand-text { color: #FFFFFF; }
+.brand-text span { color: var(--primary); }
+.brand-tag {
+  font-family: var(--font-accent);
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  margin-block-start: 0.15rem;
+}
+.site-footer .brand-tag { color: #FFFFFF; }
+
+.logo-fill { fill: var(--text); }
+.logo-stroke { stroke: var(--text); }
+.logo-cutout { fill: var(--surface); }
+:root[data-theme="dark"] .site-header .logo-fill { fill: #FFFFFF; }
+:root[data-theme="dark"] .site-header .logo-stroke { stroke: #FFFFFF; }
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--secondary);
+  border-radius: 3px;
+  padding: 0.5rem 0.65rem;
+  cursor: pointer;
+  order: 2;
+  line-height: 0;
+}
+.nav-toggle:hover { border-color: var(--primary); }
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 1.25rem;
+  height: 0.85rem;
+}
+.hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--text);
+  border-radius: 1px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform-origin: center;
+}
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .hamburger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.nav-wrap {
+  display: flex;
+  justify-content: center;
+  order: 1;
+  flex: 1;
+  min-width: 0;
+}
+.nav-wrap nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+.nav-list {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 1.35rem;
+  margin: 0;
+  padding: 0;
+}
+.nav-list a {
+  text-decoration: none;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.35rem 0;
+  border-block-end: 2px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+.nav-list a:hover { color: var(--text); border-color: var(--primary); }
+.nav-list a[aria-current="page"] { color: var(--primary); font-weight: 600; border-color: var(--primary); }
+
+.nav-dropdown { position: relative; }
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  padding: 0.35rem 0;
+  border-block-end: 2px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.dropdown-toggle:hover,
+.dropdown-toggle[aria-expanded="true"] { color: var(--text); border-color: var(--primary); }
+.dropdown-toggle[aria-current="page"] { color: var(--primary); font-weight: 700; border-color: var(--primary); }
+.dropdown-toggle .caret { font-size: 0.7rem; transition: transform 0.15s ease; }
+.dropdown-toggle[aria-expanded="true"] .caret { transform: rotate(180deg); }
+
+.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem;
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 0.6rem);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  min-width: 10rem;
+  display: none;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.dropdown-menu.open { display: block; }
+.dropdown-menu a {
+  display: block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 3px;
+  border-block-end: none;
+  white-space: nowrap;
+}
+.dropdown-menu a:hover { background: rgba(217,99,26,0.15); color: var(--text); }
+.dropdown-menu a[aria-current="page"] { background: rgba(217,99,26,0.15); color: var(--primary); font-weight: 700; }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  order: 3;
+  flex-shrink: 0;
+}
+.icon-toggle {
+  background: none;
+  border: 1px solid var(--secondary);
+  color: var(--text);
+  border-radius: 999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+}
+.icon-toggle:hover { border-color: var(--primary); color: var(--primary); }
+.icon-toggle .icon-dark { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-light { display: none; }
+:root[data-theme="dark"] .icon-toggle .icon-dark { display: inline; }
+
+.rtl-toggle { width: auto; padding: 0 0.65rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+
+.book-btn {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border-radius: 3px;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.book-btn:hover { background: var(--secondary);
+box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
+
+/* mobile-only Book Now (lives inside the collapsible menu) — hidden by default */
+.book-btn-mobile { display: none; }
+
+/* base tier (0–639px): hamburger menu, dropdown detached from the flex row
+   via position:absolute so the header row itself can stay flex-wrap:nowrap
+   and never wraps to a second line — same structural fix used on home.css. */
+@media (max-width: 639px) {
+  .nav-toggle { display: inline-block; }
+
+  .site-header .container { position: relative; align-items: center; gap: 0.5rem; padding-inline: 1rem; flex-wrap: nowrap; }
+
+  .nav-wrap {
+    display: none;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    justify-content: flex-start;
+    background: var(--surface-alt);
+    border-block-start: 1px solid var(--border);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    padding-block: 0.5rem 1rem;
+  }
+  .nav-wrap.open { display: flex; flex-direction: column; }
+  .nav-wrap nav { flex: initial; flex-direction: column; align-items: stretch; width: 100%; }
+
+  .nav-list { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
+  .nav-list li { width: 100%; }
+  .nav-list a { display: block; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .nav-dropdown { width: 100%; }
+  .dropdown-toggle { width: 100%; justify-content: space-between; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .dropdown-menu { position: static; box-shadow: none; border: none; background: transparent; border-radius: 0; min-width: 0; }
+  .dropdown-menu a { padding-inline-start: calc(var(--gutter) * 1.6); }
+
+  .header-actions { order: 2; margin-inline-start: auto; gap: 0.5rem; align-items: center; }
+  .nav-toggle { order: 3; margin-inline-start: 0.5rem; align-self: center; }
+  .book-btn-desktop { display: none; }
+  .book-btn-mobile {
+    display: block;
+    width: calc(100% - (2 * var(--gutter)));
+    text-align: center;
+    margin: 1rem var(--gutter) 0;
+  }
+
+  /* keep the logo mark, wordmark and header icons on one aligned baseline;
+     flex:1 1 0% (not auto) so the brand's hypothetical size used for the
+     flex-wrap decision starts at 0 and ellipsis truncation can actually
+     take effect before the row would ever wrap.
+     Scoped to .site-header — an unscoped .brand-copy/.brand-text/.brand-tag
+     rule here also matches the footer's reused brand-copy markup and
+     stretches it to fill the row, which (with the footer's centered text)
+     visually shoves the wordmark far away from the logo mark on mobile. */
+  .site-header .brand { gap: 0.45rem; align-items: center; flex: 1 1 0%; min-width: 0; }
+  .site-header .brand svg { width: 2rem; height: 2rem; flex-shrink: 0; }
+  .site-header .brand-copy { justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .site-header .brand-text, .site-header .brand-tag { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .site-header .brand-text { font-size: 0.95rem; line-height: 1.15; }
+  .site-header .brand-tag { font-size: 0.68rem; margin-block-start: 0.1rem; }
+  .header-actions { flex-shrink: 0; gap: 0.35rem; }
+  .nav-toggle { flex-shrink: 0; }
+  .icon-toggle { width: 1.85rem; height: 1.85rem; }
+  .rtl-toggle { font-size: 0.68rem; padding: 0 0.45rem; }
+}
+
+/* tier-2 (640–1023px): same hamburger/dropdown pattern as base — there's
+   still not enough width for the full inline nav-list. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .nav-toggle { display: inline-block; }
+
+  .site-header .container { position: relative; align-items: center; gap: 0.6rem; flex-wrap: nowrap; }
+
+  .nav-wrap {
+    display: none;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    justify-content: flex-start;
+    background: var(--surface-alt);
+    border-block-start: 1px solid var(--border);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    padding-block: 0.5rem 1rem;
+  }
+  .nav-wrap.open { display: flex; flex-direction: column; }
+  .nav-wrap nav { flex: initial; flex-direction: column; align-items: stretch; width: 100%; }
+
+  .nav-list { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
+  .nav-list li { width: 100%; }
+  .nav-list a { display: block; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .nav-dropdown { width: 100%; }
+  .dropdown-toggle { width: 100%; justify-content: space-between; padding: 0.85rem var(--gutter); border-block-end: 1px solid var(--border); }
+  .dropdown-menu { position: static; box-shadow: none; border: none; background: transparent; border-radius: 0; min-width: 0; }
+  .dropdown-menu a { padding-inline-start: calc(var(--gutter) * 1.6); }
+
+  .header-actions { order: 2; margin-inline-start: auto; gap: 0.5rem; align-items: center; }
+  .nav-toggle { order: 3; margin-inline-start: 0.5rem; align-self: center; }
+  .book-btn-desktop { display: none; }
+  .book-btn-mobile {
+    display: block;
+    width: calc(100% - (2 * var(--gutter)));
+    text-align: center;
+    margin: 1rem var(--gutter) 0;
+  }
+
+  .site-header .brand { gap: 0.5rem; align-items: center; flex: 1 1 0%; min-width: 0; }
+  .site-header .brand-copy { justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .site-header .brand-text, .site-header .brand-tag { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .header-actions { flex-shrink: 0; }
+  .nav-toggle { flex-shrink: 0; }
+}
+
+/* tier-3 + tier-4 (1024px+): full inline nav, no hamburger. */
+@media (min-width: 1024px) {
+  .nav-toggle { display: none; }
+  .nav-wrap { display: flex; }
+  .book-btn-mobile { display: none; }
+}
+
+/* tier-3 only (1024–1279px): nav list runs a little tight at this width,
+   trim gaps/sizes slightly — same pattern as home.css. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .nav-list { gap: 0.3rem 0.65rem; }
+  .nav-list a, .dropdown-toggle { font-size: 0.88rem; }
+  .site-header .brand { gap: 0.5rem; }
+  .site-header .brand svg { width: 2.4rem; height: 2.4rem; }
+  .site-header .brand-text { font-size: 1.1rem; }
+  .site-header .brand-tag { font-size: 0.72rem; }
+}
+
+/* ---------- footer ---------- */
+.site-footer {
+  background: var(--charcoal);
+  color: var(--cream-dim);
+  padding: 3rem 0 2rem;
+  font-size: 0.92rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding-block-end: 2rem;
+  border-block-end: 1px solid rgba(245,237,225,0.12);
+}
+.footer-col h4 { color: var(--cream); font-size: 1rem; margin-bottom: 0.85rem; }
+.footer-col p, .footer-col address { margin: 0 0 0.5em; font-style: normal; color: #FFFFFF; }
+.footer-contact-item { display: flex; align-items: center; gap: 0.55rem; margin-bottom: 0.6rem; }
+.footer-contact-item svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--secondary); }
+.footer-contact-item a { color: #FFFFFF; text-decoration: none; }
+.footer-contact-item a:hover { color: var(--primary); }
+.footer-links { list-style: none; margin: 0; padding: 0; }
+.footer-links li { margin-bottom: 0.55rem; }
+.footer-links a { color: #FFFFFF; text-decoration: none; }
+.footer-links a:hover { color: var(--primary); }
+.footer-brand { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; }
+.footer-brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
+.footer-brand .brand-copy { min-width: 0; }
+.footer-brand .brand-text,
+.footer-brand .brand-tag {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  padding-block-start: 1.5rem;
+}
+.footer-bottom a { color: var(--secondary); text-decoration: none; }
+.footer-bottom a:hover { color: var(--primary); }
+
+/* base tier (0–639px): center the footer, tighten the logo/wordmark gap */
+@media (max-width: 639px) {
+  .footer-grid { text-align: center; }
+  .footer-col address { text-align: center; }
+  .footer-brand { justify-content: center; gap: 0.4rem; }
+  .footer-brand svg { width: 2.5rem; height: 2.5rem; }
+  .footer-contact-item { justify-content: center; }
+  .footer-bottom { justify-content: center; text-align: center; }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; }
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- scroll-reveal animation ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* entrance pop-in animation for cards, matching the Services page convention */
+@keyframes cardPopIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ==========================================================================
+   Blog article page content
+   ========================================================================== */
+
+section.page-section,
+article.page-section { padding: 4rem 0; }
+.section-white { background: var(--surface); }
+.section-ember { background: var(--surface-ember); }
+
+.section-head { max-width: 46rem; margin-inline: auto; margin-bottom: 2.25rem; text-align: center; }
+.section-head .kicker { color: var(--primary); font-weight: 600; margin-bottom: 0.35rem; display: block; }
+.section-head h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+
+/* article hero — breadcrumb, tag, title, meta, background image with
+   dark overlay for text legibility, matching the other page heroes */
+.article-hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 85vh;
+  background:
+    linear-gradient(160deg, rgba(43,36,32,0.88) 0%, rgba(43,36,32,0.68) 45%, rgba(32,26,34,0.9) 100%),
+    url("../images/cta-chimney.jpg") center/cover no-repeat;
+  color: var(--cream);
+  padding: 5rem 0;
+  text-align: center;
+}
+.article-hero .container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  animation: articleFadeUp 0.7s ease both;
+}
+@keyframes articleFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .article-hero .container { animation: none; }
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--cream-dim);
+  margin-bottom: 1.25rem;
+}
+.breadcrumb a { color: var(--cream-dim); text-decoration: none; transition: color 0.2s ease; }
+.breadcrumb a:hover { color: #FFFFFF; }
+.breadcrumb span[aria-current="page"] { color: var(--primary); font-weight: 600; }
+.article-tag {
+  display: inline-block;
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: 1rem;
+}
+.article-hero h1 { color: #FFFFFF; font-size: clamp(1.8rem, 4vw, 2.9rem); max-width: 42ch; margin-inline: auto; }
+
+/* article meta — author · calendar-tagged date · clock-tagged read time.
+   Markup expected:
+   <p class="article-meta">
+     <span class="meta-author">By Ravi Kumar</span>
+     <span class="meta-item"><svg class="meta-icon">…calendar…</svg> Sep 12, 2026</span>
+     <span class="meta-item"><svg class="meta-icon">…clock…</svg> 4 min read</span>
+   </p>
+   Sits on the dark hero image, so icons and separators use --cream-dim
+   (not --secondary, which is unreadable on this background). */
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  color: var(--cream-dim);
+  font-size: 0.92rem;
+  margin: 1rem 0 0;
+}
+.article-meta .meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.article-meta .meta-item svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex-shrink: 0;
+  color: var(--cream-dim);
+}
+
+/* base tier (0–639px): shorter hero on phones */
+@media (max-width: 639px) {
+  .article-hero { min-height: 40vh; padding: 4rem 0; }
+}
+
+/* article layout — reading column + author sidebar card */
+.article-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  max-width: 62rem;
+  margin-inline: auto;
+}
+.article-body p {
+  color: var(--text-soft);
+  font-size: 1.04rem;
+  line-height: 1.75;
+  margin: 0 0 1.25rem;
+}
+.article-body h2 {
+  font-size: 1.3rem;
+  margin: 2rem 0 0.75rem;
+}
+.article-body h2:first-of-type { margin-top: 0.5rem; }
+
+.pull-quote {
+  margin: 2rem 0;
+  padding: 1.5rem 1.75rem;
+  border-inline-start: 4px solid var(--primary);
+  background: var(--surface-ember);
+  border-radius: 4px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--text);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.pull-quote:hover {
+  transform: translateX(4px);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+}
+
+/* article inline image — same card convention as the Services page:
+   2px border, persistent ember shadow, border-color shift on hover */
+.article-inline-image {
+  margin: 2rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  animation: cardPopIn 0.6s ease both;
+}
+.article-inline-image:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+}
+.article-inline-image img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.article-inline-image:hover img { transform: scale(1.05); }
+
+/* author card — same card convention as the Services page */
+.author-card {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  background: var(--surface-ember);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  animation: cardPopIn 0.6s ease both;
+}
+.author-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transform: translateY(-6px);
+}
+.author-avatar {
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #FFFFFF;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.author-label { display: block; color: var(--text-soft); font-size: 0.78rem; margin-bottom: 0.15rem; }
+.author-info h3 { font-size: 1.02rem; margin-bottom: 0.3rem; }
+.author-info p { margin: 0; color: var(--text-soft); font-size: 0.9rem; line-height: 1.45; }
+
+/* article layout switches to a 2-column reading + sidebar split at
+   1024px+ (aligned to the site's tier-3 boundary rather than the old
+   ad-hoc 900px), where there's reliably enough room for a 2fr/1fr split
+   without cramping the reading column. */
+@media (min-width: 1024px) {
+  .article-layout { grid-template-columns: 2fr 1fr; align-items: start; }
+  .author-card { position: sticky; top: 6.5rem; flex-direction: column; text-align: center; }
+}
+
+/* related posts — same card convention as the Services page.
+   2-up at tablet width, 3-up only from 1024px+ — 3 cards at ~640px would
+   squeeze each into a ~180px column, tight enough to wrap headlines
+   unpredictably, the same risk already handled on the other pages'
+   card grids. min-width: 0 stops a long headline word from forcing its
+   column wider than its fr share. */
+.related-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+.related-card {
+  min-width: 0;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  animation: cardPopIn 0.6s ease both;
+}
+.related-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 30px rgba(233, 69, 69, 0.12);
+  border-color: var(--primary);
+}
+.related-card.reveal:nth-child(1) { transition-delay: 0s; animation-delay: 0s; }
+.related-card.reveal:nth-child(2) { transition-delay: 0.1s; animation-delay: 0.1s; }
+.related-card.reveal:nth-child(3) { transition-delay: 0.2s; animation-delay: 0.2s; }
+.related-card-media { aspect-ratio: 3 / 2; overflow: hidden; }
+.related-card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.related-card:hover .related-card-media img { transform: scale(1.08); }
+.related-card-body { padding: 1.1rem 1.25rem 1.35rem; }
+.related-card-tag { color: var(--primary); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.related-card-body h3 {
+  font-size: 1rem;
+  margin: 0.4rem 0 0;
+  line-height: 1.35;
+  transition: color 0.25s ease;
+}
+.related-card:hover .related-card-body h3 { color: var(--primary); }
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* flex + justify-content:center (not CSS grid) so a leftover 3rd card
+     with only 2 in the row centers under the pair instead of sitting
+     flush-left in its grid column. */
+  .related-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; }
+  .related-card { flex: 0 1 calc(50% - 0.75rem); max-width: calc(50% - 0.75rem); }
+}
+@media (min-width: 1024px) {
+  .related-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; }
+  .related-card { flex: 0 1 calc(33.333% - 1rem); max-width: calc(33.333% - 1rem); }
+}
