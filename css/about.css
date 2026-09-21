@@ -721,7 +721,11 @@ section.page-section { padding: 4rem 0; }
   position: absolute;
   top: 0.4rem;
   bottom: 0.4rem;
-  left: 1rem;
+  /* logical (not left:), so the line sits on the same side as the text
+     indent below — .timeline-item's padding-inline-start — and flips to
+     the right automatically under dir="rtl" instead of staying pinned to
+     the physical left while the cards flip to indent from the right. */
+  inset-inline-start: 1rem;
   width: 2px;
   background: var(--border);
 }
@@ -733,9 +737,13 @@ section.page-section { padding: 4rem 0; }
 .timeline-item:last-child { padding-block-end: 0; }
 .timeline-dot {
   position: absolute;
-  left: 1rem;
+  /* centered on the line via calc (half the dot's own 16px width) instead
+     of left + transform: translateX(-50%) — translateX is a physical
+     transform that doesn't mirror under dir="rtl", so it used to hold the
+     dot in place while inset-inline-start moved the line, pulling them
+     apart. calc keeps the offset logical in both directions. */
+  inset-inline-start: calc(1rem - 8px);
   top: 0.3rem;
-  transform: translateX(-50%);
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -746,7 +754,7 @@ section.page-section { padding: 4rem 0; }
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .timeline-item:hover .timeline-dot {
-  transform: translateX(-50%) scale(1.35);
+  transform: scale(1.35);
   box-shadow: 0 0 0 6px rgba(217,99,26,0.32);
 }
 .timeline-card {
