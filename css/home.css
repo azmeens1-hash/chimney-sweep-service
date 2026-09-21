@@ -212,7 +212,7 @@ button { -webkit-appearance: none; appearance: none; }
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.35rem 1.35rem;
+  gap: 0.35rem 1.5rem;
   margin: 0;
   padding: 0;
 }
@@ -265,7 +265,7 @@ button { -webkit-appearance: none; appearance: none; }
   position: absolute;
   inset-inline-start: 0;
   top: calc(100% + 0.6rem);
-  background: var(--surface-alt);
+  background: var(--surface-ember);
   border: 1px solid var(--border);
   border-radius: 4px;
   min-width: 10rem;
@@ -356,7 +356,7 @@ button { -webkit-appearance: none; appearance: none; }
     top: 100%;
     inset-inline: 0;
     justify-content: flex-start;
-    background: var(--surface-alt);
+    background: var(--surface-ember);
     border-block-start: 1px solid var(--border);
     box-shadow: 0 12px 20px rgba(0,0,0,0.12);
     padding-block: 0.5rem 1rem;
@@ -424,7 +424,7 @@ button { -webkit-appearance: none; appearance: none; }
     top: 100%;
     inset-inline: 0;
     justify-content: flex-start;
-    background: var(--surface-alt);
+    background: var(--surface-ember);
     border-block-start: 1px solid var(--border);
     box-shadow: 0 12px 20px rgba(0,0,0,0.12);
     padding-block: 0.5rem 1rem;
@@ -486,7 +486,7 @@ button { -webkit-appearance: none; appearance: none; }
    safety margin rather than fitting to the exact pixel. Tier-4 (1280px+)
    has enough room and keeps the normal, roomier sizing throughout. */
 @media (min-width: 1024px) and (max-width: 1279px) {
-  .nav-list { gap: 0.3rem 0.65rem; }
+  .nav-list { gap: 0.3rem 1.05rem; }
   .nav-list a, .dropdown-toggle { font-size: 0.88rem; }
   .site-header .brand { gap: 0.5rem; }
   .site-header .brand svg { width: 2.4rem; height: 2.4rem; }
@@ -554,6 +554,34 @@ button { -webkit-appearance: none; appearance: none; }
 .footer-bottom a { color: var(--secondary); text-decoration: none; }
 .footer-bottom a:hover { color: var(--primary); }
 
+/* social icons — sit below the brand lockup + description in the first
+   footer column, same circular-icon convention as the header's icon-toggle */
+.footer-social {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
+}
+.footer-social a {
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.footer-social a:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+.footer-social svg { width: 1.05rem; height: 1.05rem; }
+
 /* ==========================================================================
    base tier (0–639px, mobile) — center the footer, and tighten the gap
    between the logo mark and the wordmark so they read as one lockup
@@ -567,6 +595,7 @@ button { -webkit-appearance: none; appearance: none; }
   }
   .footer-brand svg { width: 2.5rem; height: 2.5rem; }
   .footer-contact-item { justify-content: center; }
+  .footer-social { justify-content: center; }
   .footer-bottom { justify-content: center; text-align: center; }
 }
 
@@ -579,10 +608,20 @@ button { -webkit-appearance: none; appearance: none; }
 
 /* ==========================================================================
    tier-3 (1024–1279px, laptop) & tier-4 (1280px+, desktop) — same 4-column
-   footer layout at both sizes, so one min-width query covers both
+   footer layout at both sizes, so one min-width query covers both.
+   Column TRACKS are sized to each list's actual content instead of four
+   equal 1fr shares — "Explore"'s links (~56px, "Services" is the longest)
+   don't need anywhere near a full quarter of the row, and giving Explore
+   an equal-width track next to short link text is what was reading as a
+   big gap before Booking, even once the gap between the two column boxes
+   was closed to zero. Narrowing Explore's own track pulls Booking left by
+   the same amount, which actually closes the visual gap. Booking (longest
+   link "Book an appointment" ~139px) and Contact (longest row ~257px,
+   icon + phone/email) get tracks sized the same way; Brand keeps a wide
+   track since its description paragraph wraps across 2–3 lines.
    ========================================================================== */
 @media (min-width: 1024px) {
-  .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; }
+  .footer-grid { grid-template-columns: 3.8fr 1.4fr 2fr 3fr; column-gap: 2rem; }
 }
 
 .visually-hidden {
@@ -665,11 +704,13 @@ main { text-align: center; }
 @media (prefers-reduced-motion: reduce) {
   .hero-eyebrow, .hero h1, .hero p.lede, .hero-actions { animation: none; }
 }
+/* matches Home 2's hero kicker (.hero2-copy .kicker) property-for-property:
+   primary ember color, bold weight, block display, same bottom margin. */
 .hero-eyebrow {
-  color: var(--cream-dim);
-  font-size: 0.95rem;
+  color: var(--primary);
+  font-weight: 600;
+  display: block;
   margin-bottom: 0.75rem;
-  display: inline-block;
 }
 .hero h1 { color: #FFFFFF; font-size: clamp(2.1rem, 5vw, 3.3rem); max-width: 18ch; margin-inline: auto; }
 .hero p.lede { color: var(--cream-dim); font-size: 1.1rem; max-width: 46ch; margin-inline: auto; }

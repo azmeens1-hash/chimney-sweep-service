@@ -185,7 +185,7 @@ h1, h2, h3, h4 {
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.35rem 1.35rem;
+  gap: 0.35rem 1.5rem;
   margin: 0;
   padding: 0;
 }
@@ -309,7 +309,7 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
     top: 100%;
     inset-inline: 0;
     justify-content: flex-start;
-    background: var(--surface-alt);
+    background: var(--surface-ember);
     border-block-start: 1px solid var(--border);
     box-shadow: 0 12px 20px rgba(0,0,0,0.12);
     padding-block: 0.5rem 1rem;
@@ -368,7 +368,7 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
     top: 100%;
     inset-inline: 0;
     justify-content: flex-start;
-    background: var(--surface-alt);
+    background: var(--surface-ember);
     border-block-start: 1px solid var(--border);
     box-shadow: 0 12px 20px rgba(0,0,0,0.12);
     padding-block: 0.5rem 1rem;
@@ -411,7 +411,7 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
 /* tier-3 only (1024–1279px): nav list runs a little tight at this width,
    trim gaps/sizes slightly — same pattern as home.css. */
 @media (min-width: 1024px) and (max-width: 1279px) {
-  .nav-list { gap: 0.3rem 0.65rem; }
+  .nav-list { gap: 0.3rem 1.05rem; }
   .nav-list a, .dropdown-toggle { font-size: 0.88rem; }
   .site-header .brand { gap: 0.5rem; }
   .site-header .brand svg { width: 2.4rem; height: 2.4rem; }
@@ -463,6 +463,31 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
 }
 .footer-bottom a { color: var(--secondary); text-decoration: none; }
 .footer-bottom a:hover { color: var(--primary); }
+.footer-social {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
+}
+.footer-social a {
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.footer-social a:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+.footer-social svg { width: 1.05rem; height: 1.05rem; }
 
 /* base tier (0–639px): center the footer, tighten the logo/wordmark gap */
 @media (max-width: 639px) {
@@ -472,12 +497,13 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
   .footer-brand svg { width: 2.5rem; height: 2.5rem; }
   .footer-contact-item { justify-content: center; }
   .footer-bottom { justify-content: center; text-align: center; }
+  .footer-social { justify-content: center; }
 }
 @media (min-width: 640px) and (max-width: 1023px) {
   .footer-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (min-width: 1024px) {
-  .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; }
+  .footer-grid { grid-template-columns: 3.8fr 1.4fr 2fr 3fr; column-gap: 2rem; }
 }
 
 .visually-hidden {
@@ -558,14 +584,10 @@ article.page-section { padding: 4rem 0; }
 .breadcrumb a:hover { color: #FFFFFF; }
 .breadcrumb span[aria-current="page"] { color: var(--primary); font-weight: 600; }
 .article-tag {
-  display: inline-block;
-  background: var(--primary);
-  color: #FFFFFF;
+  color: var(--primary);
   font-weight: 600;
-  font-size: 0.75rem;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
-  margin-bottom: 1rem;
+  display: block;
+  margin-bottom: 0.75rem;
 }
 .article-hero h1 { color: #FFFFFF; font-size: clamp(1.8rem, 4vw, 2.9rem); max-width: 42ch; margin-inline: auto; }
 

@@ -317,3 +317,20 @@ table.compare-table {
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
 .reveal.is-visible { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ==========================================================================
+   Hero secondary button ("View care plans") — matches Home 1's .btn-ghost
+   convention: a real border at rest, and on hover only the border/text
+   color shifts to the ember accent. No background fill on hover (that's
+   what .btn-ghost-light used to do) — the button never gets "filled in",
+   only its border and label change color, same as Home 1's hero buttons.
+   ========================================================================== */
+.btn-ghost-light {
+  color: var(--text);
+  border-color: var(--secondary);
+}
+.btn-ghost-light:hover {
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+}

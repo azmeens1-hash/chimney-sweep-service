@@ -185,7 +185,7 @@ h1, h2, h3, h4 {
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.35rem 1.35rem;
+  gap: 0.35rem 1.5rem;
   margin: 0;
   padding: 0;
 }
@@ -230,7 +230,7 @@ h1, h2, h3, h4 {
   position: absolute;
   inset-inline-start: 0;
   top: calc(100% + 0.6rem);
-  background: var(--surface-alt);
+  background: var(--surface-ember);
   border: 1px solid var(--border);
   border-radius: 4px;
   min-width: 10rem;
@@ -308,7 +308,7 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
     top: 100%;
     inset-inline: 0;
     justify-content: flex-start;
-    background: var(--surface-alt);
+    background: var(--surface-ember);
     border-block-start: 1px solid var(--border);
     box-shadow: 0 12px 20px rgba(0,0,0,0.12);
     padding-block: 0.5rem 1rem;
@@ -362,7 +362,7 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
     top: 100%;
     inset-inline: 0;
     justify-content: flex-start;
-    background: var(--surface-alt);
+    background: var(--surface-ember);
     border-block-start: 1px solid var(--border);
     box-shadow: 0 12px 20px rgba(0,0,0,0.12);
     padding-block: 0.5rem 1rem;
@@ -400,7 +400,7 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
 /* tier-3 only (1024–1279px): nav list runs a little tight at this width,
    trim gaps/sizes slightly — same pattern as home.css / about.css. */
 @media (min-width: 1024px) and (max-width: 1279px) {
-  .nav-list { gap: 0.3rem 0.65rem; }
+  .nav-list { gap: 0.3rem 1.05rem; }
   .nav-list a, .dropdown-toggle { font-size: 0.88rem; }
   .site-header .brand { gap: 0.5rem; }
   .site-header .brand svg { width: 2.4rem; height: 2.4rem; }
@@ -453,6 +453,34 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
 .footer-bottom a { color: var(--secondary); text-decoration: none; }
 .footer-bottom a:hover { color: var(--primary); }
 
+/* social icons — sit below the brand lockup + description in the first
+   footer column, same circular-icon convention as the header's icon-toggle */
+.footer-social {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
+}
+.footer-social a {
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.footer-social a:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+.footer-social svg { width: 1.05rem; height: 1.05rem; }
+
 @media (max-width: 639px) {
   .footer-grid { text-align: center; }
   .footer-col address { text-align: center; }
@@ -461,9 +489,10 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
   .footer-bottom { justify-content: center; text-align: center; }
   .footer-brand { gap: 0.4rem; }
   .footer-brand svg { width: 2.5rem; height: 2.5rem; }
+  .footer-social { justify-content: center; }
 }
 @media (min-width: 640px) and (max-width: 1023px) { .footer-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1024px) { .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; } }
+@media (min-width: 1024px) { .footer-grid { grid-template-columns: 3.8fr 1.4fr 2fr 3fr; column-gap: 2rem; } }
 
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
@@ -534,26 +563,55 @@ section.page-section { padding: 4rem 0; }
   z-index: 1;
   width: 100%;
 }
-/* staggered hero entrance — eyebrow, heading, lede each fade/rise in turn, same as Home 1 */
+/* staggered hero entrance — eyebrow, heading, lede, then the button row each
+   fade/rise in turn, same as Home 1 */
 .page-hero .hero-eyebrow,
 .page-hero h1,
-.page-hero p.lede {
+.page-hero p.lede,
+.page-hero .hero-actions {
   opacity: 0;
   animation: fadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .page-hero .hero-eyebrow { animation-delay: 0.05s; }
 .page-hero h1 { animation-delay: 0.18s; }
 .page-hero p.lede { animation-delay: 0.32s; }
+.page-hero .hero-actions { animation-delay: 0.46s; }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .page-hero .hero-eyebrow, .page-hero h1, .page-hero p.lede { animation: none; opacity: 1; }
+  .page-hero .hero-eyebrow, .page-hero h1, .page-hero p.lede, .page-hero .hero-actions { animation: none; opacity: 1; }
 }
-.page-hero .hero-eyebrow { color: var(--cream-dim); font-size: 0.95rem; margin-bottom: 0.75rem; }
+/* matches Home 1's hero kicker (.hero-eyebrow) property-for-property:
+   primary ember color, bold weight, block display, same bottom margin. */
+.page-hero .hero-eyebrow {
+  color: var(--primary);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.75rem;
+}
 .page-hero h1 { color: #FFFFFF; font-size: clamp(2.1rem, 5vw, 3.2rem); max-width: 34ch; margin-inline: auto; }
 .page-hero p.lede { color: var(--cream-dim); font-size: 1.1rem; max-width: 48ch; margin: 1rem auto 0; }
+/* hero button row — same layout and ghost-button treatment as Home 1's
+   .hero-actions (primary fill + bordered ghost, both on the dark hero bg) */
+.page-hero .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.75rem; justify-content: center; }
+.btn-ghost {
+  color: var(--cream);
+  padding: 0.8rem 1.5rem;
+  border: 1px solid var(--secondary);
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 1rem;
+  display: inline-block;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+.btn-ghost:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+}
 @media (max-width: 639px) {
   .page-hero { min-height: 50vh; padding: 4.5rem 0; }
 }
