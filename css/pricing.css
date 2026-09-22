@@ -442,7 +442,7 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
 .footer-links li { margin-bottom: 0.55rem; }
 .footer-links a { color: #FFFFFF; text-decoration: none; }
 .footer-links a:hover { color: var(--primary); }
-.footer-brand { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; }
+.footer-brand { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; text-decoration: none; }
 .footer-brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
 .footer-brand .brand-copy { min-width: 0; }
 .footer-brand .brand-text,

@@ -475,7 +475,7 @@ box-shadow: 0 10px 22px rgba(217,99,26,0.32); transform: translateY(-1px); }
 .footer-links li { margin-bottom: 0.55rem; }
 .footer-links a { color: #FFFFFF; text-decoration: none; }
 .footer-links a:hover { color: var(--primary); }
-.footer-brand { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; }
+.footer-brand { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; text-decoration: none; }
 .footer-brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
 .footer-brand .brand-copy { min-width: 0; }
 .footer-brand .brand-text,
@@ -789,7 +789,16 @@ section.page-section { padding: 4rem 0; }
 .timeline-item.reveal:nth-child(5) { transition-delay: 0.4s; }
 
 @media (min-width: 1024px) {
-  .timeline::before { left: 50%; transform: translateX(-50%); }
+  /* logical (not left: + transform: translateX(-50%)) — the base rule above
+     sets inset-inline-start: 1rem, which resolves to right: 1rem under
+     dir="rtl". A later physical left: 50% doesn't clear that right value,
+     and per the CSS spec, when left/right/width are all non-auto on an
+     RTL box, "left" is the one that's ignored — so the line snapped back
+     to right: 1rem instead of centering. inset-inline-start: 50% overrides
+     the same logical property cleanly in both directions, and a small
+     logical margin (instead of translateX, which is always physical)
+     centers the 2px line without re-introducing a left/right conflict. */
+  .timeline::before { inset-inline-start: 50%; inset-inline-end: auto; margin-inline-start: -1px; }
   .timeline-item {
     width: 50%;
     padding-inline-start: 0;

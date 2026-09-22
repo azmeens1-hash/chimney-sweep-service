@@ -527,6 +527,7 @@ button { -webkit-appearance: none; appearance: none; }
   align-items: center;
   gap: 0.65rem;
   margin-bottom: 0.75rem;
+  text-decoration: none;
 }
 .footer-brand svg { width: 2.9rem; height: 2.9rem; flex-shrink: 0; }
 /* the wordmark must never break onto a second line — truncate with an
